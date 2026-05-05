@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DrupalClaw — AI-Powered Drupal Development Workspace</title>
+  <meta name="description" content="DrupalClaw is an agent-first Drupal workspace. AI-powered development with 14 built-in skills, Dev Panel, Docker stack, and full PHP tooling — all in one container.">
+  <meta property="og:title" content="DrupalClaw — Automate. Extract. Empower Drupal.">
+  <meta property="og:description" content="Agent-first Drupal development workspace with AI, Docker, PHP 8.3, Composer, Drush, and 14 built-in skills.">
+  <meta property="og:image" content="logo.png">
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #0D1B2A;
+      --navy-mid: #1B2838;
+      --navy-light: #243447;
+      --drupal-blue: #0678BE;
+      --drupal-light: #0690E0;
+      --teal: #00B4D8;
+      --mint: #90E0EF;
+      --white: #FFFFFF;
+      --off-white: #F0F4F8;
+      --light-text: #8DA2B5;
+      --mid-text: #C5D3DE;
+      --accent: #F77F00;
+      --green: #06D6A0;
+      --red: #EF476F;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--navy);
+      color: var(--white);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── Navigation ─── */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      background: rgba(13, 27, 42, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0, 180, 216, 0.15);
+      padding: 0.75rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    nav .brand { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
+    nav .brand img { height: 32px; }
+    nav .brand span { font-weight: 700; font-size: 1.1rem; color: var(--white); }
+    nav .brand span em { font-style: normal; color: var(--drupal-blue); }
+    nav .links { display: flex; gap: 1.5rem; align-items: center; }
+    nav .links a { color: var(--light-text); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+    nav .links a:hover { color: var(--teal); }
+    nav .links .gh-btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: var(--drupal-blue); color: var(--white);
+      padding: 0.45rem 1rem; border-radius: 6px; font-weight: 600; font-size: 0.85rem;
+      transition: background 0.2s;
+    }
+    nav .links .gh-btn:hover { background: var(--drupal-light); color: var(--white); }
+    nav .links .gh-btn svg { width: 18px; height: 18px; }
+
+    /* ─── Hero ─── */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      text-align: center; padding: 6rem 2rem 4rem;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+      background: radial-gradient(ellipse at 30% 20%, rgba(6, 120, 190, 0.12) 0%, transparent 50%),
+                  radial-gradient(ellipse at 70% 80%, rgba(0, 180, 216, 0.08) 0%, transparent 50%);
+      animation: drift 20s ease-in-out infinite alternate;
+    }
+    @keyframes drift { from { transform: translate(0, 0); } to { transform: translate(-3%, 2%); } }
+    .hero-content { position: relative; z-index: 1; max-width: 800px; }
+    .hero-content img { height: 120px; margin-bottom: 1.5rem; filter: drop-shadow(0 4px 20px rgba(0, 180, 216, 0.2)); }
+    .hero h1 { font-size: 3.2rem; font-weight: 800; line-height: 1.1; margin-bottom: 0.5rem; }
+    .hero h1 em { font-style: normal; color: var(--drupal-blue); }
+    .hero .tagline { font-size: 1.1rem; color: var(--light-text); margin-bottom: 0.5rem; letter-spacing: 3px; text-transform: uppercase; font-weight: 600; }
+    .hero .subtitle { font-size: 1.25rem; color: var(--mid-text); margin-bottom: 2.5rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .hero .cta-row { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--drupal-blue); color: var(--white);
+      padding: 0.85rem 2rem; border-radius: 8px; font-weight: 700; font-size: 1rem;
+      text-decoration: none; transition: all 0.2s; border: 2px solid var(--drupal-blue);
+    }
+    .btn-primary:hover { background: var(--drupal-light); border-color: var(--drupal-light); transform: translateY(-1px); }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: transparent; color: var(--teal);
+      padding: 0.85rem 2rem; border-radius: 8px; font-weight: 700; font-size: 1rem;
+      text-decoration: none; transition: all 0.2s; border: 2px solid var(--teal);
+    }
+    .btn-secondary:hover { background: rgba(0, 180, 216, 0.1); transform: translateY(-1px); }
+
+    /* ─── Section base ─── */
+    section { padding: 5rem 2rem; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .section-title { font-size: 2rem; font-weight: 800; text-align: center; margin-bottom: 0.5rem; }
+    .section-subtitle { text-align: center; color: var(--light-text); font-size: 1.05rem; margin-bottom: 3rem; }
+
+    /* ─── What is it ─── */
+    .what-is { background: var(--navy-mid); }
+    .what-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+    .what-text h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 1rem; }
+    .what-text h2 em { font-style: normal; color: var(--teal); }
+    .what-text p { color: var(--mid-text); font-size: 1.05rem; margin-bottom: 1.5rem; }
+    .what-badges { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      background: var(--navy-light); padding: 0.35rem 0.8rem; border-radius: 20px;
+      font-size: 0.8rem; font-weight: 600; color: var(--mint); border: 1px solid rgba(0, 180, 216, 0.2);
+    }
+    /* Screenshot placeholder */
+    .screenshot-wrap {
+      background: var(--navy); border-radius: 12px; overflow: hidden;
+      border: 1px solid var(--navy-light); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+    .screenshot-bar {
+      background: var(--navy-light); padding: 0.5rem 0.8rem;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .screenshot-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .screenshot-dot.r { background: var(--red); }
+    .screenshot-dot.y { background: var(--accent); }
+    .screenshot-dot.g { background: var(--green); }
+    .screenshot-body {
+      padding: 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
+      color: var(--mint); line-height: 1.8; min-height: 280px;
+    }
+    .screenshot-body .prompt { color: var(--green); }
+    .screenshot-body .output { color: var(--mid-text); }
+    .screenshot-body .highlight { color: var(--accent); font-weight: 600; }
+    .screenshot-body .cmd { color: var(--drupal-light); }
+
+    /* ─── Features ─── */
+    .features { background: var(--navy); }
+    .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .feat-card {
+      background: var(--navy-mid); border-radius: 12px; padding: 1.8rem;
+      border: 1px solid var(--navy-light); transition: all 0.3s;
+      position: relative; overflow: hidden;
+    }
+    .feat-card::before {
+      content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+      background: linear-gradient(90deg, var(--drupal-blue), var(--teal));
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .feat-card:hover { border-color: rgba(0, 180, 216, 0.3); transform: translateY(-3px); }
+    .feat-card:hover::before { opacity: 1; }
+    .feat-icon { font-size: 2rem; margin-bottom: 0.8rem; }
+    .feat-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .feat-card p { color: var(--light-text); font-size: 0.9rem; }
+
+    /* ─── Skills ─── */
+    .skills-section { background: var(--navy-mid); }
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; }
+    .skill-item {
+      background: var(--navy); border-radius: 8px; padding: 0.8rem 1rem;
+      border: 1px solid var(--navy-light); display: flex; align-items: center; gap: 0.6rem;
+      transition: border-color 0.2s;
+    }
+    .skill-item:hover { border-color: var(--drupal-blue); }
+    .skill-item .skill-icon { font-size: 1.2rem; flex-shrink: 0; }
+    .skill-item .skill-name { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 600; color: var(--teal); }
+    .skill-item .skill-desc { font-size: 0.72rem; color: var(--light-text); }
+
+    /* ─── Dev Panel ─── */
+    .devpanel { background: var(--navy); }
+    .panel-mockup {
+      max-width: 420px; margin: 0 auto;
+      background: var(--navy-mid); border-radius: 12px;
+      border: 1px solid var(--navy-light); overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+    .panel-header {
+      padding: 1rem 1.2rem; border-bottom: 1px solid var(--navy-light);
+    }
+    .panel-header h3 { font-size: 1rem; font-weight: 700; }
+    .panel-header p { font-size: 0.75rem; color: var(--light-text); }
+    .panel-group { padding: 0.8rem 1.2rem; }
+    .panel-group-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--light-text); margin-bottom: 0.5rem; font-weight: 600; }
+    .panel-btns { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .panel-btn {
+      background: var(--navy-light); border: none; color: var(--white);
+      padding: 0.5rem 0.9rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .panel-btn:hover { background: var(--drupal-blue); }
+
+    /* ─── Architecture ─── */
+    .arch { background: var(--navy-mid); }
+    .arch-diagram {
+      display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem;
+    }
+    .arch-box {
+      background: var(--navy); border-radius: 10px; padding: 1.2rem 1.5rem;
+      border: 1px solid var(--navy-light); text-align: center; min-width: 150px;
+      transition: border-color 0.2s;
+    }
+    .arch-box:hover { border-color: var(--drupal-blue); }
+    .arch-box .arch-icon { font-size: 1.8rem; margin-bottom: 0.4rem; }
+    .arch-box h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.2rem; }
+    .arch-box p { font-size: 0.75rem; color: var(--light-text); }
+    .arch-arrow { display: flex; align-items: center; color: var(--teal); font-size: 1.5rem; }
+
+    /* ─── Quick Start ─── */
+    .quickstart { background: var(--navy); }
+    .code-block {
+      background: #1E1E2E; border-radius: 10px; overflow: hidden; margin-bottom: 1.5rem;
+      border: 1px solid var(--navy-light);
+    }
+    .code-header {
+      background: var(--navy-light); padding: 0.5rem 1rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .code-header span { font-size: 0.8rem; color: var(--light-text); font-weight: 600; }
+    .code-header .copy-btn {
+      background: none; border: 1px solid var(--navy-light); color: var(--light-text);
+      padding: 0.2rem 0.6rem; border-radius: 4px; cursor: pointer; font-size: 0.7rem;
+      transition: all 0.2s;
+    }
+    .code-header .copy-btn:hover { border-color: var(--teal); color: var(--teal); }
+    .code-body {
+      padding: 1.2rem 1.5rem;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
+      line-height: 1.8; color: var(--green); overflow-x: auto;
+    }
+    .code-body .comment { color: var(--light-text); }
+
+    /* ─── CTA ─── */
+    .cta-section {
+      background: linear-gradient(135deg, var(--navy-mid) 0%, var(--navy) 100%);
+      text-align: center; padding: 5rem 2rem;
+      border-top: 1px solid rgba(0, 180, 216, 0.1);
+    }
+    .cta-section h2 { font-size: 2.2rem; font-weight: 800; margin-bottom: 1rem; }
+    .cta-section p { color: var(--mid-text); font-size: 1.1rem; margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto; }
+
+    /* ─── Footer ─── */
+    footer {
+      background: var(--navy); border-top: 1px solid var(--navy-light);
+      padding: 2rem; text-align: center; color: var(--light-text); font-size: 0.85rem;
+    }
+    footer a { color: var(--teal); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.2rem; }
+      .what-grid { grid-template-columns: 1fr; }
+      .feat-grid { grid-template-columns: 1fr; }
+      .arch-diagram { flex-direction: column; align-items: center; }
+      .arch-arrow { transform: rotate(90deg); }
+      nav .links a:not(.gh-btn) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+  <a href="#" class="brand">
+    <img src="icon.png" alt="DrupalClaw">
+    <span>Drupal<em>Claw</em></span>
+  </a>
+  <div class="links">
+    <a href="#features">Features</a>
+    <a href="#skills">Skills</a>
+    <a href="#quickstart">Quick Start</a>
+    <a href="https://github.com/PauloCarv/drupalclaw" class="gh-btn" target="_blank">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      GitHub
+    </a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero" id="hero">
+  <div class="hero-content">
+    <img src="logo.png" alt="DrupalClaw Logo">
+    <div class="tagline">Automate. Extract. Empower Drupal.</div>
+    <h1>Drupal<em>Claw</em></h1>
+    <p class="subtitle">An agent-first workspace for Drupal development. AI-powered, containerized, with 14 built-in skills and a visual Dev Panel.</p>
+    <div class="cta-row">
+      <a href="https://github.com/PauloCarv/drupalclaw" class="btn-primary" target="_blank">
+        <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        View on GitHub
+      </a>
+      <a href="#quickstart" class="btn-secondary">Quick Start</a>
+    </div>
+  </div>
+</section>
+
+<!-- What is it -->
+<section class="what-is" id="about">
+  <div class="container">
+    <div class="what-grid">
+      <div class="what-text">
+        <h2>What is <em>DrupalClaw</em>?</h2>
+        <p>DrupalClaw is a self-hosted, agent-first workspace built on <a href="https://github.com/rcarmo/piclaw" style="color:var(--teal)">PiClaw</a>. It packages an AI coding agent with a complete Drupal development stack into a single Docker container.</p>
+        <p>Talk to the agent in natural language. It creates projects, manages Docker stacks, runs Drush, scaffolds modules, analyzes code, fixes errors, imports databases &mdash; all through a unified chat interface with a visual Dev Panel.</p>
+        <div class="what-badges">
+          <span class="badge">PHP 8.3</span>
+          <span class="badge">Composer 2</span>
+          <span class="badge">Drush</span>
+          <span class="badge">Docker-in-Docker</span>
+          <span class="badge">MariaDB</span>
+          <span class="badge">nginx + PHP-FPM</span>
+          <span class="badge">PHPStan</span>
+          <span class="badge">PHPCS/PHPCBF</span>
+          <span class="badge">SQLite</span>
+        </div>
+      </div>
+      <div class="screenshot-wrap">
+        <div class="screenshot-bar">
+          <span class="screenshot-dot r"></span>
+          <span class="screenshot-dot y"></span>
+          <span class="screenshot-dot g"></span>
+        </div>
+        <div class="screenshot-body">
+          <span class="prompt">Paulo:</span> <span class="output">create a new drupal project and start the stack</span><br><br>
+          <span class="prompt">DrupalClaw:</span> <span class="cmd">Running drupal-init...</span><br>
+          <span class="output">$ composer create-project drupal/recommended-project drupal</span><br>
+          <span class="highlight">&#10003; Project created in /workspace/drupal</span><br><br>
+          <span class="cmd">Running drupal-serve...</span><br>
+          <span class="output">$ docker compose up -d (nginx + php-fpm + mariadb)</span><br>
+          <span class="highlight">&#10003; Stack running on http://localhost:8080</span><br><br>
+          <span class="prompt">Paulo:</span> <span class="output">install admin_toolbar and rebuild cache</span><br>
+          <span class="cmd">$ composer require drupal/admin_toolbar</span><br>
+          <span class="cmd">$ drush en admin_toolbar -y && drush cr</span><br>
+          <span class="highlight">&#10003; admin_toolbar enabled, cache cleared</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="features" id="features">
+  <div class="container">
+    <h2 class="section-title">Built for Drupal Developers</h2>
+    <p class="section-subtitle">Everything you need in a single container</p>
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-icon">&#129302;</div>
+        <h3>Agent-First Workflow</h3>
+        <p>Chat with an AI agent that understands Drupal. Create projects, debug errors, manage modules, run Drush &mdash; all in natural language.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">&#128736;</div>
+        <h3>Visual Dev Panel</h3>
+        <p>One-click buttons for common tasks: start stack, cache rebuild, analyze code, export database. Fully customizable via JSON config.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">&#128051;</div>
+        <h3>Docker Stack Management</h3>
+        <p>Production-like environment with nginx + PHP-FPM + MariaDB/PostgreSQL/SQLite. Managed through sibling containers via Docker socket.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">&#128268;</div>
+        <h3>14 Built-in Skills</h3>
+        <p>Pre-configured commands for the entire Drupal lifecycle: init, serve, modules, analysis, fixes, database, logs, debugging, performance.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">&#128270;</div>
+        <h3>Code Quality Tools</h3>
+        <p>PHPStan and PHPCS/PHPCBF integrated via skills. Analyze custom code for errors, then auto-fix coding standard violations.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">&#128218;</div>
+        <h3>Self-Hosted & Open Source</h3>
+        <p>Runs on your machine or server. Your code stays local. Based on PiClaw &mdash; fully open source and extensible.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Skills -->
+<section class="skills-section" id="skills">
+  <div class="container">
+    <h2 class="section-title">14 Drupal Skills</h2>
+    <p class="section-subtitle">Pre-configured commands the agent executes on demand</p>
+    <div class="skills-grid">
+      <div class="skill-item">
+        <div class="skill-icon">&#128640;</div>
+        <div><div class="skill-name">drupal-init</div><div class="skill-desc">Create project via Composer</div></div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">&#9654;&#65039;</div>
+        <div><div class="skill-name">drupal-serve</div><div class="skill-desc">Start Docker stack</div></div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">&#128295;</div>
+        <div><div class="skill-name">drupal-stack</div><div class="skill-desc">Start/stop/restart containers</div></div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">&#128260;</div>
+        <div><div class="skill-name">drupal-cr</div><div class="skill-desc">Cache rebuild (drush cr)</div></div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">&#128203;</div>
+        <div><div class="skill-name">drupal-status</div><div class="skill-desc">Project &amp; module status</div></div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">&#128230;</div>
+        <div><div class="skill-name">drupal-module</div><div class="skill-desc">Scaffold custom module</div></div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">&#128270;</div>
+        <div><div class="skill-name">drupal-analyze</div><div class="skill-desc">PHPStan + PHPCS analysis</div></div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">&#128295;</div>
+        <div><div class="skill-name">drupal-fix</div><div class="skill-desc">Auto-fix code standards</div></div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">&#129513;</div>
+        <div><div class="skill-name">drupal-install</div><div class="skill-desc">Install contrib module</div></div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">&#128190;</div>
+        <div><div class="skill-name">drupal-db-export</div><div class="skill-desc">Export database to SQL</div></div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">&#128229;</div>
+        <div><div class="skill-name">drupal-db-import</div><div class="skill-desc">Import SQL dump</div></div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">&#128269;</div>
+        <div><div class="skill-name">drupal-db-query</div><div class="skill-desc">Execute SQL query</div></div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">&#128220;</div>
+        <div><div class="skill-name">drupal-logs</div><div class="skill-desc">Watchdog log viewer</div></div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">&#128027;</div>
+        <div><div class="skill-name">drupal-debug</div><div class="skill-desc">Error diagnosis</div></div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">&#9889;</div>
+        <div><div class="skill-name">drupal-perf</div><div class="skill-desc">Performance analysis</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Dev Panel -->
+<section class="devpanel" id="devpanel">
+  <div class="container">
+    <h2 class="section-title">Dev Panel</h2>
+    <p class="section-subtitle">Visual shortcuts &mdash; click to execute, fully customizable</p>
+    <div class="panel-mockup">
+      <div class="panel-header">
+        <h3>Drupal Dev Panel</h3>
+        <p>Click to execute commands</p>
+      </div>
+      <div class="panel-group">
+        <div class="panel-group-label">Stack</div>
+        <div class="panel-btns">
+          <button class="panel-btn">&#128640; Start Stack</button>
+          <button class="panel-btn">&#9632; Stop</button>
+          <button class="panel-btn">&#128260; Restart</button>
+          <button class="panel-btn">&#128202; Status</button>
+        </div>
+      </div>
+      <div class="panel-group">
+        <div class="panel-group-label">Project</div>
+        <div class="panel-btns">
+          <button class="panel-btn">&#128640; Init</button>
+          <button class="panel-btn">&#128260; Cache Rebuild</button>
+          <button class="panel-btn">&#128203; Status</button>
+        </div>
+      </div>
+      <div class="panel-group">
+        <div class="panel-group-label">Code</div>
+        <div class="panel-btns">
+          <button class="panel-btn">&#128230; New Module</button>
+          <button class="panel-btn">&#128270; Analyze</button>
+          <button class="panel-btn">&#128295; Fix</button>
+          <button class="panel-btn">&#129513; Install Module</button>
+        </div>
+      </div>
+      <div class="panel-group" style="border-bottom: none;">
+        <div class="panel-group-label">Database</div>
+        <div class="panel-btns">
+          <button class="panel-btn">&#128190; DB Export</button>
+          <button class="panel-btn">&#128229; DB Import</button>
+          <button class="panel-btn">&#128269; DB Query</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Architecture -->
+<section class="arch" id="architecture">
+  <div class="container">
+    <h2 class="section-title">Architecture</h2>
+    <p class="section-subtitle">One container orchestrates everything</p>
+    <div class="arch-diagram">
+      <div class="arch-box">
+        <div class="arch-icon">&#129302;</div>
+        <h4>DrupalClaw</h4>
+        <p>AI Agent + Dev Panel<br>PHP 8.3 + Composer + Drush</p>
+      </div>
+      <div class="arch-arrow">&#8594;</div>
+      <div class="arch-box">
+        <div class="arch-icon">&#128051;</div>
+        <h4>Docker Socket</h4>
+        <p>Sibling containers<br>managed from inside</p>
+      </div>
+      <div class="arch-arrow">&#8594;</div>
+      <div class="arch-box">
+        <div class="arch-icon">&#127760;</div>
+        <h4>nginx + PHP-FPM</h4>
+        <p>Production-like stack<br>Volume-mounted code</p>
+      </div>
+      <div class="arch-arrow">&#8594;</div>
+      <div class="arch-box">
+        <div class="arch-icon">&#128451;</div>
+        <h4>Database</h4>
+        <p>MariaDB / PostgreSQL<br>or SQLite</p>
+      </div>
+    </div>
+    <p style="text-align:center; color:var(--light-text); font-size:0.9rem;">Based on <a href="https://github.com/rcarmo/piclaw" style="color:var(--teal)">PiClaw</a> &mdash; a self-hosted AI workspace by <a href="https://github.com/rcarmo" style="color:var(--teal)">@rcarmo</a></p>
+  </div>
+</section>
+
+<!-- Quick Start -->
+<section class="quickstart" id="quickstart">
+  <div class="container">
+    <h2 class="section-title">Quick Start</h2>
+    <p class="section-subtitle">Up and running in 3 commands</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span>Terminal</span>
+        <button class="copy-btn" onclick="navigator.clipboard.writeText('git clone https://github.com/PauloCarv/drupalclaw.git\ncd drupalclaw\ndocker compose up -d')">Copy</button>
+      </div>
+      <div class="code-body">
+        <span class="comment"># Clone the repository</span><br>
+        git clone https://github.com/PauloCarv/drupalclaw.git<br><br>
+        <span class="comment"># Enter the directory</span><br>
+        cd drupalclaw<br><br>
+        <span class="comment"># Start DrupalClaw + MariaDB</span><br>
+        docker compose up -d
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span>Access</span>
+      </div>
+      <div class="code-body">
+        <span class="comment"># Open your browser</span><br>
+        <span style="color:var(--teal)">http://localhost:8083</span><br><br>
+        <span class="comment"># Click "Init" in the Dev Panel to create a Drupal project</span><br>
+        <span class="comment"># Click "Start Stack" to launch nginx + PHP-FPM + MariaDB</span><br>
+        <span class="comment"># Start talking to the agent!</span>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span>Standalone (without external DB)</span>
+        <button class="copy-btn" onclick="navigator.clipboard.writeText('docker run -d --name drupalclaw -p 8083:8080 -v $(pwd)/workspace:/workspace ghcr.io/paulocarv/drupalclaw:latest')">Copy</button>
+      </div>
+      <div class="code-body">
+        <span class="comment"># Run standalone with SQLite</span><br>
+        docker run -d --name drupalclaw \<br>
+        &nbsp;&nbsp;-p 8083:8080 \<br>
+        &nbsp;&nbsp;-v "$(pwd)/workspace:/workspace" \<br>
+        &nbsp;&nbsp;ghcr.io/paulocarv/drupalclaw:latest
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Ready to Claw into Drupal?</h2>
+  <p>Open source, self-hosted, agent-first. Start building with AI today.</p>
+  <div class="cta-row" style="justify-content:center;">
+    <a href="https://github.com/PauloCarv/drupalclaw" class="btn-primary" target="_blank">
+      <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      View on GitHub
+    </a>
+    <a href="https://github.com/rcarmo/piclaw" class="btn-secondary" target="_blank">PiClaw (upstream)</a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>
+    <strong>DrupalClaw</strong> &mdash; by <a href="https://github.com/PauloCarv">Paulo Carvalho</a>
+    &nbsp;&middot;&nbsp; Based on <a href="https://github.com/rcarmo/piclaw">PiClaw</a> by @rcarmo
+    &nbsp;&middot;&nbsp; Open Source &middot; GPL-2.0
+  </p>
+</footer>
+
+</body>
+</html>
