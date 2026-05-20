@@ -1,611 +1,1188 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DrupalClaw — AI-Powered Drupal Development Workspace</title>
-  <meta name="description" content="DrupalClaw is an agent-first Drupal workspace. AI-powered development with 14 built-in skills, Dev Panel, Docker stack, and full PHP tooling — all in one container.">
-  <meta property="og:title" content="DrupalClaw — Automate. Extract. Empower Drupal.">
-  <meta property="og:description" content="Agent-first Drupal development workspace with AI, Docker, PHP 8.3, Composer, Drush, and 14 built-in skills.">
-  <meta property="og:image" content="logo.png">
-  <link rel="icon" type="image/png" href="icon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DrupalClaw — An agent-first workspace for Drupal</title>
+  <meta name="description" content="DrupalClaw is an agent-first Drupal workspace. AI-powered development with 15 built-in skills, Dev Panel, Docker stack, and full PHP tooling — all in one container." />
+  <link rel="icon" type="image/png" href="assets/icon.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
   <style>
     :root {
-      --navy: #0D1B2A;
-      --navy-mid: #1B2838;
-      --navy-light: #243447;
-      --drupal-blue: #0678BE;
-      --drupal-light: #0690E0;
-      --teal: #00B4D8;
-      --mint: #90E0EF;
-      --white: #FFFFFF;
-      --off-white: #F0F4F8;
-      --light-text: #8DA2B5;
-      --mid-text: #C5D3DE;
-      --accent: #F77F00;
-      --green: #06D6A0;
-      --red: #EF476F;
+      --ink:        #0A0E14;
+      --ink-2:      #0F141C;
+      --ink-3:      #161D27;
+      --line:       #1F2935;
+      --line-2:     #2A3543;
+      --paper:      #F4F1E8;   /* warm off-white */
+      --paper-mute: #C9C3B0;
+      --fg:         #E9E6DA;
+      --fg-dim:     #A9B0BC;
+      --fg-mute:    #687180;
+      --blue:       #1F94F2;   /* drupal-derived */
+      --blue-soft:  #88C7F8;
+      --blue-deep:  #0B5A99;
+      --ok:         #6FCF8E;
+      --warn:       #E8B14C;
+
+      --max:  1240px;
+      --pad:  clamp(20px, 4vw, 56px);
+
+      --term-bg:   #0F141C;
+      --term-bg-2: #161D27;
+      --term-line: #1F2935;
+      --term-fg:   #E9E6DA;
+      --term-dim:  #A9B0BC;
+      --term-mute: #687180;
+
+      color-scheme: dark;
+    }
+
+    /* ─── Light theme overrides ─── */
+    [data-theme="light"] {
+      --ink:        #F5F2E8;
+      --ink-2:      #ECE7D6;
+      --ink-3:      #E2DCC6;
+      --line:       #D8D2BD;
+      --line-2:     #C4BEA8;
+      --paper:      #14181F;   /* inverted for skills section */
+      --paper-mute: #4A5260;
+      --fg:         #14181F;
+      --fg-dim:     #4A5260;
+      --fg-mute:    #8E8666;
+      --blue:       #0B5A99;
+      --blue-soft:  #1F94F2;
+      --blue-deep:  #003C6B;
+      --ok:         #2E8B57;
+      --warn:       #B8800F;
+
+      color-scheme: light;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--navy);
-      color: var(--white);
-      line-height: 1.6;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--ink);
+      color: var(--fg);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
 
-    /* ─── Navigation ─── */
-    nav {
-      position: fixed; top: 0; width: 100%; z-index: 100;
-      background: rgba(13, 27, 42, 0.92);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(0, 180, 216, 0.15);
-      padding: 0.75rem 2rem;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    nav .brand { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
-    nav .brand img { height: 32px; border-radius: 8px; }
-    nav .brand span { font-weight: 700; font-size: 1.1rem; color: var(--white); }
-    nav .brand span em { font-style: normal; color: var(--drupal-blue); }
-    nav .links { display: flex; gap: 1.5rem; align-items: center; }
-    nav .links a { color: var(--light-text); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
-    nav .links a:hover { color: var(--teal); }
-    nav .links .gh-btn {
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      background: var(--drupal-blue); color: var(--white);
-      padding: 0.45rem 1rem; border-radius: 6px; font-weight: 600; font-size: 0.85rem;
-      transition: background 0.2s;
-    }
-    nav .links .gh-btn:hover { background: var(--drupal-light); color: var(--white); }
-    nav .links .gh-btn svg { width: 18px; height: 18px; }
+    a { color: inherit; text-decoration: none; }
 
-    /* ─── Hero ─── */
+    .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .display { font-family: 'Space Grotesk', 'Inter', sans-serif; letter-spacing: -0.02em; }
+
+    /* ─────────────────────────────────────────── Top bar ─── */
+    .topbar {
+      position: fixed; inset: 0 0 auto 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px var(--pad);
+      background: rgba(10, 14, 20, 0.72);
+      backdrop-filter: saturate(140%) blur(12px);
+      -webkit-backdrop-filter: saturate(140%) blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+    [data-theme="light"] .topbar { background: rgba(245, 242, 232, 0.82); }
+
+    /* ─── Theme toggle ─── */
+    .theme-toggle {
+      display: inline-flex; align-items: center;
+      background: var(--ink-3);
+      border: 1px solid var(--line-2);
+      border-radius: 999px;
+      padding: 3px;
+      gap: 0;
+      position: relative;
+      cursor: pointer;
+    }
+    .theme-toggle button {
+      width: 30px; height: 26px;
+      background: transparent; border: 0; cursor: pointer;
+      display: grid; place-items: center;
+      color: var(--fg-mute);
+      border-radius: 999px;
+      transition: color .2s ease;
+      position: relative; z-index: 2;
+      padding: 0;
+    }
+    .theme-toggle button svg { width: 14px; height: 14px; }
+    .theme-toggle button.is-active { color: var(--blue); }
+    .theme-toggle .slider {
+      position: absolute; top: 3px; left: 3px;
+      width: 30px; height: 26px;
+      background: var(--ink);
+      border: 1px solid var(--line-2);
+      border-radius: 999px;
+      transition: transform .25s cubic-bezier(.5,.1,.3,1);
+      z-index: 1;
+    }
+    [data-theme="light"] .theme-toggle .slider { transform: translateX(30px); }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand .mark {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: var(--paper);
+      display: grid; place-items: center;
+      overflow: hidden;
+    }
+    .brand .mark img { width: 100%; height: 100%; object-fit: contain; }
+    .brand .name { font-family: 'Space Grotesk'; font-weight: 600; font-size: 17px; letter-spacing: -0.01em; }
+    .brand .name b { color: var(--blue); font-weight: 700; }
+
+    .navlinks { display: flex; align-items: center; gap: 28px; }
+    .navlinks a {
+      font-family: 'JetBrains Mono'; font-size: 12px; font-weight: 500;
+      color: var(--fg-dim); letter-spacing: 0.04em;
+      transition: color .15s ease;
+    }
+    .navlinks a:hover { color: var(--fg); }
+    .navlinks a.gh {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 14px; border: 1px solid var(--line-2); border-radius: 999px;
+      color: var(--fg); background: var(--ink-3);
+    }
+    .navlinks a.gh:hover { background: var(--ink-2); border-color: var(--blue-deep); }
+    .navlinks svg { width: 14px; height: 14px; }
+
+    /* ─────────────────────────────────────────── Hero ─── */
     .hero {
-      min-height: 100vh; display: flex; align-items: center; justify-content: center;
-      text-align: center; padding: 6rem 2rem 4rem;
-      position: relative; overflow: hidden;
+      position: relative;
+      padding: 140px var(--pad) 80px;
+      border-bottom: 1px solid var(--line);
+      overflow: hidden;
     }
     .hero::before {
-      content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-      background: radial-gradient(ellipse at 30% 20%, rgba(6, 120, 190, 0.12) 0%, transparent 50%),
-                  radial-gradient(ellipse at 70% 80%, rgba(0, 180, 216, 0.08) 0%, transparent 50%);
-      animation: drift 20s ease-in-out infinite alternate;
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: radial-gradient(ellipse 80% 60% at 70% 40%, black 0%, transparent 75%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 60% at 70% 40%, black 0%, transparent 75%);
+      pointer-events: none;
     }
-    @keyframes drift { from { transform: translate(0, 0); } to { transform: translate(-3%, 2%); } }
-    .hero-content { position: relative; z-index: 1; max-width: 800px; }
-    .hero-content img { height: 180px; margin-bottom: 1.5rem; filter: drop-shadow(0 4px 20px rgba(0, 180, 216, 0.2)); border-radius: 16px; }
-    .hero h1 { font-size: 3.2rem; font-weight: 800; line-height: 1.1; margin-bottom: 0.5rem; }
-    .hero h1 em { font-style: normal; color: var(--drupal-blue); }
-    .hero .tagline { font-size: 1.1rem; color: var(--light-text); margin-bottom: 0.5rem; letter-spacing: 3px; text-transform: uppercase; font-weight: 600; }
-    .hero .subtitle { font-size: 1.25rem; color: var(--mid-text); margin-bottom: 2.5rem; max-width: 600px; margin-left: auto; margin-right: auto; }
-    .hero .cta-row { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-    .btn-primary {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      background: var(--drupal-blue); color: var(--white);
-      padding: 0.85rem 2rem; border-radius: 8px; font-weight: 700; font-size: 1rem;
-      text-decoration: none; transition: all 0.2s; border: 2px solid var(--drupal-blue);
+    .hero-inner {
+      position: relative;
+      max-width: var(--max); margin: 0 auto;
+      display: grid; grid-template-columns: 1.05fr 1fr;
+      gap: 64px; align-items: center;
     }
-    .btn-primary:hover { background: var(--drupal-light); border-color: var(--drupal-light); transform: translateY(-1px); }
-    .btn-secondary {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      background: transparent; color: var(--teal);
-      padding: 0.85rem 2rem; border-radius: 8px; font-weight: 700; font-size: 1rem;
-      text-decoration: none; transition: all 0.2s; border: 2px solid var(--teal);
-    }
-    .btn-secondary:hover { background: rgba(0, 180, 216, 0.1); transform: translateY(-1px); }
 
-    /* ─── Section base ─── */
-    section { padding: 5rem 2rem; }
-    .container { max-width: 1100px; margin: 0 auto; }
-    .section-title { font-size: 2rem; font-weight: 800; text-align: center; margin-bottom: 0.5rem; }
-    .section-subtitle { text-align: center; color: var(--light-text); font-size: 1.05rem; margin-bottom: 3rem; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: 'JetBrains Mono'; font-size: 12px; font-weight: 500;
+      color: var(--fg-dim); letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 6px 12px 6px 10px; border: 1px solid var(--line-2);
+      border-radius: 999px;
+    }
+    .eyebrow .pulse {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--ok);
+      box-shadow: 0 0 0 0 rgba(111,207,142,0.6);
+      animation: pulse 2.6s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(111,207,142,0.5); }
+      50%     { box-shadow: 0 0 0 6px rgba(111,207,142,0); }
+    }
 
-    /* ─── What is it ─── */
-    .what-is { background: var(--navy-mid); }
-    .what-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
-    .what-text h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 1rem; }
-    .what-text h2 em { font-style: normal; color: var(--teal); }
-    .what-text p { color: var(--mid-text); font-size: 1.05rem; margin-bottom: 1.5rem; }
-    .what-badges { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .badge {
-      display: inline-flex; align-items: center; gap: 0.35rem;
-      background: var(--navy-light); padding: 0.35rem 0.8rem; border-radius: 20px;
-      font-size: 0.8rem; font-weight: 600; color: var(--mint); border: 1px solid rgba(0, 180, 216, 0.2);
+    .hero h1 {
+      font-family: 'Space Grotesk';
+      font-size: clamp(48px, 7vw, 88px);
+      font-weight: 700;
+      line-height: 0.98;
+      letter-spacing: -0.035em;
+      margin: 26px 0 22px;
     }
-    /* Screenshot placeholder */
-    .screenshot-wrap {
-      background: var(--navy); border-radius: 12px; overflow: hidden;
-      border: 1px solid var(--navy-light); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    .hero h1 .ink-blue { color: var(--blue); }
+    .hero h1 .underline {
+      position: relative; display: inline-block;
     }
-    .screenshot-bar {
-      background: var(--navy-light); padding: 0.5rem 0.8rem;
-      display: flex; align-items: center; gap: 0.4rem;
+    .hero h1 .underline::after {
+      content: '';
+      position: absolute; left: 0; right: 0; bottom: 0.06em; height: 0.12em;
+      background: var(--blue); opacity: 0.25;
     }
-    .screenshot-dot { width: 10px; height: 10px; border-radius: 50%; }
-    .screenshot-dot.r { background: var(--red); }
-    .screenshot-dot.y { background: var(--accent); }
-    .screenshot-dot.g { background: var(--green); }
-    .screenshot-body {
-      padding: 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
-      color: var(--mint); line-height: 1.8; min-height: 280px;
-    }
-    .screenshot-body .prompt { color: var(--green); }
-    .screenshot-body .output { color: var(--mid-text); }
-    .screenshot-body .highlight { color: var(--accent); font-weight: 600; }
-    .screenshot-body .cmd { color: var(--drupal-light); }
 
-    /* ─── Features ─── */
-    .features { background: var(--navy); }
-    .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
-    .feat-card {
-      background: var(--navy-mid); border-radius: 12px; padding: 1.8rem;
-      border: 1px solid var(--navy-light); transition: all 0.3s;
-      position: relative; overflow: hidden;
+    .lede {
+      max-width: 540px;
+      font-size: 19px; line-height: 1.55;
+      color: var(--fg-dim);
+      margin-bottom: 36px;
     }
-    .feat-card::before {
-      content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
-      background: linear-gradient(90deg, var(--drupal-blue), var(--teal));
-      opacity: 0; transition: opacity 0.3s;
-    }
-    .feat-card:hover { border-color: rgba(0, 180, 216, 0.3); transform: translateY(-3px); }
-    .feat-card:hover::before { opacity: 1; }
-    .feat-icon { font-size: 2rem; margin-bottom: 0.8rem; }
-    .feat-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .feat-card p { color: var(--light-text); font-size: 0.9rem; }
+    .lede b { color: var(--fg); font-weight: 600; }
 
-    /* ─── Skills ─── */
-    .skills-section { background: var(--navy-mid); }
-    .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; }
-    .skill-item {
-      background: var(--navy); border-radius: 8px; padding: 0.8rem 1rem;
-      border: 1px solid var(--navy-light); display: flex; align-items: center; gap: 0.6rem;
-      transition: border-color 0.2s;
+    .cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 22px; border-radius: 10px;
+      font-family: 'Space Grotesk'; font-weight: 600; font-size: 15px;
+      letter-spacing: -0.005em;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+      border: 1px solid transparent; cursor: pointer;
     }
-    .skill-item:hover { border-color: var(--drupal-blue); }
-    .skill-item .skill-icon { font-size: 1.2rem; flex-shrink: 0; }
-    .skill-item .skill-name { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 600; color: var(--teal); }
-    .skill-item .skill-desc { font-size: 0.72rem; color: var(--light-text); }
+    .btn svg { width: 16px; height: 16px; }
+    .btn-primary { background: var(--blue); color: #001220; }
+    .btn-primary:hover { background: #3DA8F6; transform: translateY(-1px); }
+    .btn-ghost { border-color: var(--line-2); color: var(--fg); background: transparent; }
+    .btn-ghost:hover { background: var(--ink-3); border-color: var(--blue-deep); }
+    .btn-kbd {
+      display: inline-flex; gap: 4px; margin-left: 4px;
+    }
+    .btn-kbd kbd {
+      font-family: 'JetBrains Mono'; font-size: 11px;
+      padding: 2px 6px; border: 1px solid var(--line-2); border-radius: 4px;
+      color: var(--fg-dim); background: var(--ink-2);
+    }
 
-    /* ─── Dev Panel ─── */
-    .devpanel { background: var(--navy); }
-    .panel-mockup {
-      max-width: 420px; margin: 0 auto;
-      background: var(--navy-mid); border-radius: 12px;
-      border: 1px solid var(--navy-light); overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    .hero-meta {
+      margin-top: 36px;
+      display: flex; gap: 28px; flex-wrap: wrap;
+      font-family: 'JetBrains Mono'; font-size: 12px; color: var(--fg-mute);
+      letter-spacing: 0.02em;
     }
-    .panel-header {
-      padding: 1rem 1.2rem; border-bottom: 1px solid var(--navy-light);
-    }
-    .panel-header h3 { font-size: 1rem; font-weight: 700; }
-    .panel-header p { font-size: 0.75rem; color: var(--light-text); }
-    .panel-group { padding: 0.8rem 1.2rem; }
-    .panel-group-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--light-text); margin-bottom: 0.5rem; font-weight: 600; }
-    .panel-btns { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-    .panel-btn {
-      background: var(--navy-light); border: none; color: var(--white);
-      padding: 0.5rem 0.9rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600;
-      cursor: pointer; transition: background 0.2s;
-    }
-    .panel-btn:hover { background: var(--drupal-blue); }
+    .hero-meta b { color: var(--fg); font-weight: 600; }
 
-    /* ─── Architecture ─── */
-    .arch { background: var(--navy-mid); }
-    .arch-diagram {
-      display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem;
+    /* Hero terminal — explicitly dark in both themes */
+    .terminal {
+      position: relative;
+      background: var(--term-bg);
+      border: 1px solid var(--term-line);
+      border-radius: 14px;
+      color: var(--term-fg);
+      box-shadow:
+        0 1px 0 0 rgba(255,255,255,0.04) inset,
+        0 40px 80px -30px rgba(0,0,0,0.6);
+      overflow: hidden;
     }
-    .arch-box {
-      background: var(--navy); border-radius: 10px; padding: 1.2rem 1.5rem;
-      border: 1px solid var(--navy-light); text-align: center; min-width: 150px;
-      transition: border-color 0.2s;
+    .term-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--term-line);
+      background: var(--term-bg-2);
     }
-    .arch-box:hover { border-color: var(--drupal-blue); }
-    .arch-box .arch-icon { font-size: 1.8rem; margin-bottom: 0.4rem; }
-    .arch-box h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.2rem; }
-    .arch-box p { font-size: 0.75rem; color: var(--light-text); }
-    .arch-arrow { display: flex; align-items: center; color: var(--teal); font-size: 1.5rem; }
+    .term-bar .dots { display: flex; gap: 6px; }
+    .term-bar .dots span { width: 11px; height: 11px; border-radius: 50%; background: #2A3543; }
+    .term-bar .title {
+      flex: 1; text-align: center;
+      font-family: 'JetBrains Mono'; font-size: 11px; color: var(--term-mute);
+      letter-spacing: 0.04em;
+    }
+    .term-tabs { display: flex; gap: 4px; }
+    .term-tab {
+      font-family: 'JetBrains Mono'; font-size: 11px; color: var(--term-mute);
+      padding: 4px 8px; border-radius: 4px;
+    }
+    .term-tab.active { background: #0A0E14; color: var(--term-fg); }
 
-    /* ─── Quick Start ─── */
-    .quickstart { background: var(--navy); }
-    .code-block {
-      background: #1E1E2E; border-radius: 10px; overflow: hidden; margin-bottom: 1.5rem;
-      border: 1px solid var(--navy-light);
+    .term-body {
+      padding: 22px 24px 26px;
+      font-family: 'JetBrains Mono'; font-size: 13px;
+      line-height: 1.85; color: var(--term-dim);
     }
-    .code-header {
-      background: var(--navy-light); padding: 0.5rem 1rem;
+    .term-body .you { color: #88C7F8; }
+    .term-body .agent { color: #6FCF8E; }
+    .term-body .cmd { color: var(--term-fg); }
+    .term-body .path { color: #E8B14C; }
+    .term-body .ok::before { content: '✓ '; color: #6FCF8E; }
+    .term-body .ok { color: #6FCF8E; }
+    .term-body .dim { color: var(--term-mute); }
+    .term-body .line { display: block; }
+    .term-body .cursor {
+      display: inline-block; width: 8px; height: 14px;
+      background: var(--blue); vertical-align: middle; margin-left: 2px;
+      animation: blink 1s steps(1) infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ─────────────────────────────────────────── Section frame ─── */
+    .section {
+      max-width: var(--max); margin: 0 auto;
+      padding: 110px var(--pad);
+    }
+    .section.tight { padding: 80px var(--pad); }
+
+    .sec-head {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 48px;
+      margin-bottom: 56px;
+      align-items: end;
+    }
+    .sec-tag {
+      font-family: 'JetBrains Mono'; font-size: 12px; font-weight: 500;
+      color: var(--fg-mute); letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .sec-tag::before { content: '— '; color: var(--blue); }
+    .sec-title {
+      font-family: 'Space Grotesk'; font-weight: 700;
+      font-size: clamp(34px, 4.4vw, 52px);
+      line-height: 1.04; letter-spacing: -0.028em;
+      max-width: 720px;
+    }
+    .sec-title em { font-style: normal; color: var(--blue); }
+    .sec-sub {
+      grid-column: 2;
+      max-width: 620px;
+      color: var(--fg-dim); font-size: 17px; margin-top: 16px;
+    }
+
+    .section-divider {
+      border: 0; border-top: 1px solid var(--line);
+    }
+
+    /* ─────────────────────────────────────────── What is it ─── */
+    .what {
+      background: var(--ink-2);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .what .section { padding-top: 96px; padding-bottom: 96px; }
+    .what-grid {
+      display: grid; grid-template-columns: 1.1fr 1fr; gap: 56px;
+      align-items: start;
+    }
+    .what-grid p {
+      color: var(--fg-dim); font-size: 17px; margin-bottom: 18px;
+      max-width: 540px;
+    }
+    .what-grid p b { color: var(--fg); }
+    .stack {
+      display: flex; flex-wrap: wrap; gap: 6px; margin-top: 24px;
+    }
+    .pill {
+      display: inline-flex; align-items: center;
+      padding: 6px 10px;
+      border: 1px solid var(--line-2); border-radius: 6px;
+      font-family: 'JetBrains Mono'; font-size: 12px; color: var(--fg);
+      background: var(--ink);
+    }
+    .pill .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--blue); margin-right: 8px;
+    }
+
+    /* code card (what panel) — kept dark in both themes via .terminal */
+    .what-code { box-shadow: 0 30px 60px -30px rgba(0,0,0,0.6); }
+    .what-code .term-body { padding: 24px 26px 28px; font-size: 12.5px; line-height: 1.9; }
+
+    /* ─────────────────────────────────────────── Features ─── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .feat {
+      background: var(--ink);
+      padding: 36px 32px 40px;
+      position: relative;
+      transition: background .2s ease;
+    }
+    .feat:hover { background: var(--ink-2); }
+    .feat-num {
+      font-family: 'JetBrains Mono'; font-size: 11px; color: var(--fg-mute);
+      letter-spacing: 0.08em; margin-bottom: 28px;
+    }
+    .feat-icon {
+      width: 44px; height: 44px;
+      border: 1px solid var(--line-2); border-radius: 10px;
+      display: grid; place-items: center;
+      color: var(--blue);
+      margin-bottom: 20px;
+    }
+    .feat-icon svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+    .feat h3 {
+      font-family: 'Space Grotesk'; font-weight: 600;
+      font-size: 21px; letter-spacing: -0.015em;
+      margin-bottom: 10px;
+    }
+    .feat p {
+      color: var(--fg-dim); font-size: 15px; line-height: 1.6;
+    }
+
+    /* ─────────────────────────────────────────── Skills ─── */
+    /* Skills section uses a mid-tone band in both themes — a tonal step, not a flip. */
+    .skills-wrap {
+      background: #1A222D;          /* dark: mid slate, lighter than ink */
+      color: #E9E6DA;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .skills-wrap .sec-tag { color: #9AA3B2; }
+    .skills-wrap .sec-tag::before { color: var(--blue); }
+    .skills-wrap .sec-title { color: #E9E6DA; }
+    .skills-wrap .sec-title em { color: var(--blue); }
+    .skills-wrap .sec-sub { color: #A9B0BC; }
+
+    [data-theme="light"] .skills-wrap {
+      background: #E6E0CC;           /* light: warm tan, deeper than paper */
+      color: #2A2F38;
+      border-color: #C9C3A8;
+    }
+    [data-theme="light"] .skills-wrap .sec-tag { color: #6E6850; }
+    [data-theme="light"] .skills-wrap .sec-tag::before { color: var(--blue-deep); }
+    [data-theme="light"] .skills-wrap .sec-title { color: #14181F; }
+    [data-theme="light"] .skills-wrap .sec-title em { color: var(--blue-deep); }
+    [data-theme="light"] .skills-wrap .sec-sub { color: #4A5260; }
+
+    .skills-table {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    [data-theme="light"] .skills-table {
+      border-top: 1px solid #C9C3A8;
+      border-bottom: 1px solid #C9C3A8;
+    }
+    .skill-row {
+      display: grid;
+      grid-template-columns: 56px 280px 1fr 140px;
+      align-items: center;
+      padding: 18px 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      transition: background .15s ease;
+    }
+    [data-theme="light"] .skill-row { border-bottom: 1px solid #D6CFB5; }
+    .skill-row:last-child { border-bottom: none; }
+    .skill-row:hover { background: rgba(255,255,255,0.03); }
+    [data-theme="light"] .skill-row:hover { background: #DDD6BD; }
+    .skill-row .idx {
+      font-family: 'JetBrains Mono'; font-size: 12px; color: #7A8392;
+    }
+    [data-theme="light"] .skill-row .idx { color: #8E8666; }
+    .skill-row .name {
+      font-family: 'JetBrains Mono'; font-size: 15px; font-weight: 600;
+      color: #E9E6DA;
+    }
+    [data-theme="light"] .skill-row .name { color: #14181F; }
+    .skill-row .name::before { content: '$ '; color: var(--blue); }
+    [data-theme="light"] .skill-row .name::before { color: var(--blue-deep); }
+    .skill-row .desc { font-size: 15px; color: #A9B0BC; }
+    [data-theme="light"] .skill-row .desc { color: #4A5260; }
+    .skill-row .cat {
+      font-family: 'JetBrains Mono'; font-size: 11px;
+      color: #7A8392;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      text-align: right;
+    }
+    [data-theme="light"] .skill-row .cat { color: #6E6850; }
+
+    /* ─────────────────────────────────────────── Dev Panel ─── */
+    .panel-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 64px; align-items: center;
+    }
+    .panel-copy h3 {
+      font-family: 'Space Grotesk'; font-size: 28px; font-weight: 600;
+      letter-spacing: -0.02em; margin-bottom: 16px;
+    }
+    .panel-copy p { color: var(--fg-dim); font-size: 17px; max-width: 480px; margin-bottom: 14px; }
+    .panel-copy .panel-features {
+      list-style: none; margin-top: 24px;
+      display: grid; gap: 12px;
+    }
+    .panel-copy .panel-features li {
+      display: flex; align-items: start; gap: 12px;
+      font-size: 15px; color: var(--fg-dim);
+    }
+    .panel-copy .panel-features li::before {
+      content: ''; display: block;
+      flex-shrink: 0;
+      width: 16px; height: 16px; margin-top: 4px;
+      border: 1px solid var(--blue); border-radius: 4px;
+      background:
+        linear-gradient(45deg, transparent 45%, var(--blue) 45%, var(--blue) 55%, transparent 55%),
+        linear-gradient(-45deg, transparent 45%, var(--blue) 45%, var(--blue) 55%, transparent 55%);
+      background-size: 8px 8px;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    /* Panel mock — kept dark in both themes for IDE feel */
+    .panel-mock {
+      background: var(--term-bg);
+      color: var(--term-fg);
+      border: 1px solid var(--term-line);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 40px 90px -40px rgba(0,0,0,0.7);
+    }
+    .panel-mock-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--term-line);
       display: flex; align-items: center; justify-content: space-between;
     }
-    .code-header span { font-size: 0.8rem; color: var(--light-text); font-weight: 600; }
-    .code-header .copy-btn {
-      background: none; border: 1px solid var(--navy-light); color: var(--light-text);
-      padding: 0.2rem 0.6rem; border-radius: 4px; cursor: pointer; font-size: 0.7rem;
-      transition: all 0.2s;
+    .panel-mock-header h4 {
+      font-family: 'Space Grotesk'; font-size: 15px; font-weight: 600;
     }
-    .code-header .copy-btn:hover { border-color: var(--teal); color: var(--teal); }
-    .code-body {
-      padding: 1.2rem 1.5rem;
-      font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
-      line-height: 1.8; color: var(--green); overflow-x: auto;
+    .panel-mock-header span {
+      font-family: 'JetBrains Mono'; font-size: 11px; color: var(--term-mute);
     }
-    .code-body .comment { color: var(--light-text); }
+    .panel-mock-body { padding: 20px 22px 24px; }
+    .panel-group + .panel-group { margin-top: 22px; }
+    .panel-group-label {
+      font-family: 'JetBrains Mono'; font-size: 11px; font-weight: 500;
+      color: var(--fg-mute); letter-spacing: 0.1em; text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .panel-btns { display: flex; flex-wrap: wrap; gap: 6px; }
+    .pbtn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 12px;
+      background: #0A0E14;
+      border: 1px solid #2A3543; border-radius: 7px;
+      font-family: 'JetBrains Mono'; font-size: 12px; color: var(--term-fg);
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+    .pbtn:hover { border-color: var(--blue-soft); color: var(--blue-soft); }
+    .pbtn .dotc { width: 6px; height: 6px; border-radius: 50%; background: var(--term-mute); }
+    .pbtn.run .dotc { background: var(--ok); }
+    .pbtn.stop .dotc { background: var(--warn); }
+    .pbtn.db .dotc { background: var(--blue); }
 
-    /* ─── CTA ─── */
-    .cta-section {
-      background: linear-gradient(135deg, var(--navy-mid) 0%, var(--navy) 100%);
-      text-align: center; padding: 5rem 2rem;
-      border-top: 1px solid rgba(0, 180, 216, 0.1);
+    /* ─────────────────────────────────────────── Architecture ─── */
+    .arch-wrap {
+      background: var(--ink-2);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
     }
-    .cta-section h2 { font-size: 2.2rem; font-weight: 800; margin-bottom: 1rem; }
-    .cta-section p { color: var(--mid-text); font-size: 1.1rem; margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto; }
+    .arch-diagram {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      background: var(--ink);
+      position: relative;
+    }
+    .arch-node {
+      padding: 36px 28px 32px;
+      border-right: 1px solid var(--line);
+      position: relative;
+    }
+    .arch-node:last-child { border-right: none; }
+    .arch-node .arch-idx {
+      font-family: 'JetBrains Mono'; font-size: 11px; color: var(--fg-mute);
+      letter-spacing: 0.08em; margin-bottom: 24px;
+    }
+    .arch-node h4 {
+      font-family: 'Space Grotesk'; font-size: 19px; font-weight: 600;
+      letter-spacing: -0.015em; margin-bottom: 8px;
+    }
+    .arch-node p { color: var(--fg-dim); font-size: 14px; line-height: 1.55; }
+    .arch-node .arch-tags {
+      margin-top: 18px; display: flex; flex-wrap: wrap; gap: 6px;
+    }
+    .arch-node .arch-tag {
+      font-family: 'JetBrains Mono'; font-size: 11px; color: var(--blue-soft);
+      padding: 3px 7px; border: 1px solid var(--line-2); border-radius: 4px;
+    }
+    .arch-node .arrow {
+      position: absolute; top: 50%; right: -12px;
+      width: 24px; height: 24px; transform: translateY(-50%);
+      background: var(--ink-2); border: 1px solid var(--line);
+      border-radius: 50%;
+      display: grid; place-items: center;
+      z-index: 2; color: var(--blue);
+      font-size: 12px;
+    }
+    .arch-node:last-child .arrow { display: none; }
+    .arch-footnote {
+      text-align: center; color: var(--fg-mute); font-size: 14px;
+      margin-top: 36px;
+    }
+    .arch-footnote a { color: var(--blue-soft); border-bottom: 1px solid var(--line-2); }
 
-    /* ─── Footer ─── */
+    /* ─────────────────────────────────────────── Quick Start ─── */
+    .qs-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+    }
+    .qs-card {
+      background: var(--ink-2);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .qs-card.span2 { grid-column: 1 / -1; }
+    .qs-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+      background: var(--ink-3);
+    }
+    .qs-head .qs-step {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: 'JetBrains Mono'; font-size: 12px; color: var(--fg-dim);
+      letter-spacing: 0.04em;
+    }
+    .qs-head .qs-step b { color: var(--blue); font-weight: 600; }
+    .qs-head .copy {
+      font-family: 'JetBrains Mono'; font-size: 11px;
+      padding: 5px 10px; border: 1px solid var(--line-2); border-radius: 6px;
+      background: transparent; color: var(--fg-dim); cursor: pointer;
+      transition: all .15s ease;
+    }
+    .qs-head .copy:hover { color: var(--blue); border-color: var(--blue-deep); }
+    .qs-body {
+      padding: 22px 22px 26px;
+      font-family: 'JetBrains Mono'; font-size: 13.5px; line-height: 1.95;
+      color: var(--fg);
+      overflow-x: auto;
+    }
+    .qs-body .c { color: var(--fg-mute); }
+    .qs-body .v { color: var(--warn); }
+    .qs-body .k { color: var(--blue-soft); }
+    .qs-body a { color: var(--blue); border-bottom: 1px dashed var(--blue-deep); }
+
+    /* ─────────────────────────────────────────── Final CTA ─── */
+    .cta-final {
+      position: relative;
+      padding: 120px var(--pad) 120px;
+      border-top: 1px solid var(--line);
+      overflow: hidden;
+      background: var(--ink);
+    }
+    .cta-final::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse 50% 60% at 50% 50%, black 0%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse 50% 60% at 50% 50%, black 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-inner {
+      position: relative;
+      max-width: 820px; margin: 0 auto;
+      text-align: center;
+    }
+    .cta-inner img {
+      width: 96px; height: 96px;
+      margin-bottom: 28px;
+      filter: drop-shadow(0 12px 32px rgba(31,148,242,0.25));
+    }
+    .cta-inner h2 {
+      font-family: 'Space Grotesk'; font-weight: 700;
+      font-size: clamp(40px, 5.5vw, 64px);
+      line-height: 1; letter-spacing: -0.03em;
+      margin-bottom: 20px;
+    }
+    .cta-inner h2 em { font-style: normal; color: var(--blue); }
+    .cta-inner p { color: var(--fg-dim); font-size: 18px; max-width: 520px; margin: 0 auto 32px; }
+    .cta-inner .cta-row { justify-content: center; }
+
+    /* ─────────────────────────────────────────── Footer ─── */
     footer {
-      background: var(--navy); border-top: 1px solid var(--navy-light);
-      padding: 2rem; text-align: center; color: var(--light-text); font-size: 0.85rem;
+      border-top: 1px solid var(--line);
+      padding: 36px var(--pad);
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 16px;
+      background: var(--ink-2);
     }
-    footer a { color: var(--teal); text-decoration: none; }
-    footer a:hover { text-decoration: underline; }
+    footer .foot-brand {
+      display: flex; align-items: center; gap: 12px;
+      font-family: 'Space Grotesk'; font-size: 14px; font-weight: 500;
+    }
+    footer .foot-brand b { color: var(--blue); }
+    footer .foot-meta {
+      font-family: 'JetBrains Mono'; font-size: 12px; color: var(--fg-mute);
+      letter-spacing: 0.04em;
+    }
+    footer .foot-meta a { color: var(--fg-dim); border-bottom: 1px dotted var(--line-2); }
+    footer .foot-meta a:hover { color: var(--blue); }
 
-    /* ─── Responsive ─── */
-    @media (max-width: 768px) {
-      .hero h1 { font-size: 2.2rem; }
-      .what-grid { grid-template-columns: 1fr; }
-      .feat-grid { grid-template-columns: 1fr; }
-      .arch-diagram { flex-direction: column; align-items: center; }
-      .arch-arrow { transform: rotate(90deg); }
-      nav .links a:not(.gh-btn) { display: none; }
+    /* ─────────────────────────────────────────── Responsive ─── */
+    @media (max-width: 980px) {
+      .hero-inner,
+      .what-grid,
+      .panel-grid { grid-template-columns: 1fr; gap: 48px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .arch-diagram { grid-template-columns: 1fr; }
+      .arch-node { border-right: none; border-bottom: 1px solid var(--line); }
+      .arch-node:last-child { border-bottom: none; }
+      .arch-node .arrow { display: none; }
+      .qs-grid { grid-template-columns: 1fr; }
+      .sec-head { grid-template-columns: 1fr; gap: 16px; }
+      .sec-sub { grid-column: 1; }
+      .skill-row { grid-template-columns: 32px 1fr; row-gap: 4px; }
+      .skill-row .desc, .skill-row .cat { grid-column: 2; text-align: left; }
+      .navlinks a:not(.gh) { display: none; }
     }
   </style>
 </head>
 <body>
 
-<!-- Navigation -->
-<nav>
+<!-- ─── Top bar ─── -->
+<header class="topbar">
   <a href="#" class="brand">
-    <img src="icon.png" alt="DrupalClaw">
-    <span>Drupal<em>Claw</em></span>
+    <span class="mark"><img src="assets/icon.png" alt="" /></span>
+    <span class="name">Drupal<b>Claw</b></span>
   </a>
-  <div class="links">
+  <nav class="navlinks">
     <a href="#features">Features</a>
     <a href="#skills">Skills</a>
+    <a href="#devpanel">Dev Panel</a>
     <a href="#quickstart">Quick Start</a>
-    <a href="https://github.com/PauloCarv/drupalclaw" class="gh-btn" target="_blank">
+    <div class="theme-toggle" role="radiogroup" aria-label="Theme">
+      <span class="slider" aria-hidden="true"></span>
+      <button type="button" data-set-theme="dark" class="is-active" aria-label="Dark theme" title="Dark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <button type="button" data-set-theme="light" aria-label="Light theme" title="Light">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+    </div>
+    <a href="https://github.com/PauloCarv/drupalclaw" class="gh" target="_blank" rel="noopener">
       <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-      GitHub
+      Star on GitHub
     </a>
-  </div>
-</nav>
+  </nav>
+</header>
 
-<!-- Hero -->
-<section class="hero" id="hero">
-  <div class="hero-content">
-    <img src="logo.png" alt="DrupalClaw Logo">
-    <div class="tagline">Automate. Extract. Empower Drupal.</div>
-    <h1>Drupal<em>Claw</em></h1>
-    <p class="subtitle">An agent-first workspace for Drupal development. AI-powered, containerized, with 14 built-in skills and a visual Dev Panel.</p>
+<!-- ─── Hero ─── -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <span class="eyebrow"><span class="pulse"></span>v0.1 · open source · GPL-2.0</span>
+      <h1 class="display">
+        An <span class="underline">agent-first</span><br />
+        workspace for <span class="ink-blue">Drupal</span>.
+      </h1>
+      <p class="lede">
+        DrupalClaw packages an <b>AI coding agent</b>, a Docker-managed PHP stack,
+        and 15 Drupal-specific skills into a single self-hosted container. Talk to it,
+        and it builds.
+      </p>
+      <div class="cta-row">
+        <a href="https://github.com/PauloCarv/drupalclaw" class="btn btn-primary" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          View source
+        </a>
+        <a href="#quickstart" class="btn btn-ghost">
+          Quick start
+          <span class="btn-kbd"><kbd>⌘</kbd><kbd>K</kbd></span>
+        </a>
+      </div>
+      <div class="hero-meta">
+        <span><b>15</b> built-in skills</span>
+        <span><b>1</b> container</span>
+        <span><b>0</b> config to start</span>
+      </div>
+    </div>
+
+    <div class="terminal">
+      <div class="term-bar">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <div class="title">~/workspace · drupalclaw</div>
+        <div class="term-tabs">
+          <span class="term-tab active">chat</span>
+          <span class="term-tab">logs</span>
+        </div>
+      </div>
+      <div class="term-body">
+        <span class="line"><span class="dim">$</span> <span class="you">you ›</span> create a new drupal project and start the stack</span>
+        <span class="line">&nbsp;</span>
+        <span class="line"><span class="agent">claw ›</span> running <span class="cmd">drupal-init</span></span>
+        <span class="line"><span class="dim">  composer create-project drupal/recommended-project</span> <span class="path">/workspace/drupal</span></span>
+        <span class="line"><span class="ok">project scaffolded · 42 packages installed</span></span>
+        <span class="line">&nbsp;</span>
+        <span class="line"><span class="agent">claw ›</span> running <span class="cmd">drupal-serve</span></span>
+        <span class="line"><span class="dim">  docker compose up -d (nginx + php-fpm + mariadb)</span></span>
+        <span class="line"><span class="ok">stack up · <span class="path">http://localhost:8080</span></span></span>
+        <span class="line">&nbsp;</span>
+        <span class="line"><span class="dim">$</span> <span class="you">you ›</span> install admin_toolbar and clear cache<span class="cursor"></span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── What is it ─── -->
+<section class="what" id="about">
+  <div class="section">
+    <div class="sec-head">
+      <span class="sec-tag">01 · About</span>
+      <div>
+        <h2 class="sec-title">A container that <em>understands</em> Drupal.</h2>
+        <p class="sec-sub">DrupalClaw is built on PiClaw — an open-source AI workspace — and ships with the entire PHP toolchain Drupal developers actually use.</p>
+      </div>
+    </div>
+
+    <div class="what-grid">
+      <div>
+        <p>Most AI coding tools speak <b>generic PHP</b>. DrupalClaw speaks <b>Drupal</b>: drush, hook conventions, module scaffolds, watchdog logs, cache rebuilds, contrib install patterns.</p>
+        <p>Tell the agent what you want — <em>"scaffold a custom block module"</em>, <em>"diagnose this 500 error"</em>, <em>"import the staging DB"</em> — and it picks the right skill, runs the right command, and shows you the result. No prompt engineering required.</p>
+        <div class="stack">
+          <span class="pill"><span class="dot"></span>PHP 8.3</span>
+          <span class="pill"><span class="dot"></span>Composer 2</span>
+          <span class="pill"><span class="dot"></span>Drush</span>
+          <span class="pill"><span class="dot"></span>Docker-in-Docker</span>
+          <span class="pill"><span class="dot"></span>MariaDB</span>
+          <span class="pill"><span class="dot"></span>PostgreSQL</span>
+          <span class="pill"><span class="dot"></span>SQLite</span>
+          <span class="pill"><span class="dot"></span>nginx + PHP-FPM</span>
+          <span class="pill"><span class="dot"></span>PHPStan</span>
+          <span class="pill"><span class="dot"></span>PHPCS / PHPCBF</span>
+        </div>
+      </div>
+
+      <div class="what-code terminal">
+        <div class="term-bar">
+          <div class="dots"><span></span><span></span><span></span></div>
+          <div class="title">agent · session</div>
+          <div class="term-tabs"><span class="term-tab active">log</span></div>
+        </div>
+        <div class="term-body">
+          <span class="line"><span class="you">paulo ›</span> the homepage is throwing a 500 after the last deploy</span>
+          <span class="line">&nbsp;</span>
+          <span class="line"><span class="agent">claw ›</span> reading <span class="cmd">drupal-logs</span></span>
+          <span class="line"><span class="dim">  watchdog · last 50 entries · severity ≥ error</span></span>
+          <span class="line"><span class="dim">  → InvalidArgumentException · routing</span></span>
+          <span class="line">&nbsp;</span>
+          <span class="line"><span class="agent">claw ›</span> running <span class="cmd">drupal-debug</span></span>
+          <span class="line"><span class="dim">  cache empty · route table stale</span></span>
+          <span class="line"><span class="ok">fix · <span class="cmd">drush cr</span> → routes rebuilt</span></span>
+          <span class="line">&nbsp;</span>
+          <span class="line"><span class="agent">claw ›</span> homepage 200 OK · <span class="path">/</span> verified</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Features ─── -->
+<section class="section" id="features">
+  <div class="sec-head">
+    <span class="sec-tag">02 · Capabilities</span>
+    <div>
+      <h2 class="sec-title">Built for the Drupal lifecycle.</h2>
+      <p class="sec-sub">Not a generic chatbot taped onto a container — every capability targets a real Drupal task.</p>
+    </div>
+  </div>
+
+  <div class="features-grid">
+    <div class="feat">
+      <div class="feat-num">/ 01</div>
+      <div class="feat-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 4v3M12 17v3M4 12h3M17 12h3M6.3 6.3l2.1 2.1M15.6 15.6l2.1 2.1M6.3 17.7l2.1-2.1M15.6 8.4l2.1-2.1"/></svg>
+      </div>
+      <h3>Agent-first workflow</h3>
+      <p>Natural language goes in, drush and composer commands come out. The agent picks the skill, you review the diff.</p>
+    </div>
+
+    <div class="feat">
+      <div class="feat-num">/ 02</div>
+      <div class="feat-icon">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 14h3M7 17h6"/></svg>
+      </div>
+      <h3>Visual Dev Panel</h3>
+      <p>Common commands as one-click buttons — start stack, cache rebuild, analyze, export DB. JSON-configurable.</p>
+    </div>
+
+    <div class="feat">
+      <div class="feat-num">/ 03</div>
+      <div class="feat-icon">
+        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="9" rx="1"/><rect x="6" y="6" width="12" height="5" rx="1"/><circle cx="8" cy="15.5" r="0.8" fill="currentColor"/><circle cx="11" cy="15.5" r="0.8" fill="currentColor"/></svg>
+      </div>
+      <h3>Docker stack management</h3>
+      <p>Sibling containers via socket. nginx + PHP-FPM + your DB of choice. Same shape as production.</p>
+    </div>
+
+    <div class="feat">
+      <div class="feat-num">/ 04</div>
+      <div class="feat-icon">
+        <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="4" cy="6" r="1.4" fill="currentColor" stroke="none"/><circle cx="4" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="4" cy="18" r="1.4" fill="currentColor" stroke="none"/></svg>
+      </div>
+      <h3>15 built-in skills</h3>
+      <p>Init, serve, modules, analysis, fixes, database I/O, logs, debugging, performance — the full Drupal day.</p>
+    </div>
+
+    <div class="feat">
+      <div class="feat-num">/ 05</div>
+      <div class="feat-icon">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M16 16l5 5"/><path d="M9 11h4M11 9v4"/></svg>
+      </div>
+      <h3>Static analysis & autofix</h3>
+      <p>PHPStan and PHPCS/PHPCBF wired in. Find issues with one button, fix coding-standard violations with the next.</p>
+    </div>
+
+    <div class="feat">
+      <div class="feat-num">/ 06</div>
+      <div class="feat-icon">
+        <svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M4 6l8 7 8-7"/><path d="M8 18v3M16 18v3"/></svg>
+      </div>
+      <h3>Self-hosted, open source</h3>
+      <p>Your code, your machine, your control. GPL-2.0, built on PiClaw, extensible top to bottom.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Skills ─── -->
+<section class="skills-wrap" id="skills">
+  <div class="section">
+    <div class="sec-head">
+      <span class="sec-tag">03 · Skills</span>
+      <div>
+        <h2 class="sec-title">15 commands the agent already knows.</h2>
+        <p class="sec-sub">Each skill is a focused, pre-configured command the agent invokes on your behalf — no glue code required.</p>
+      </div>
+    </div>
+
+    <div class="skills-table">
+      <div class="skill-row"><div class="idx">01</div><div class="name">drupal-init</div><div class="desc">Create a new Drupal project via Composer</div><div class="cat">Project</div></div>
+      <div class="skill-row"><div class="idx">02</div><div class="name">drupal-serve</div><div class="desc">Start the Docker stack (nginx + PHP-FPM + DB)</div><div class="cat">Stack</div></div>
+      <div class="skill-row"><div class="idx">03</div><div class="name">drupal-stack</div><div class="desc">Start, stop, or restart sibling containers</div><div class="cat">Stack</div></div>
+      <div class="skill-row"><div class="idx">04</div><div class="name">drupal-cr</div><div class="desc">Rebuild Drupal cache (drush cr)</div><div class="cat">Project</div></div>
+      <div class="skill-row"><div class="idx">05</div><div class="name">drupal-status</div><div class="desc">Inspect project and module status</div><div class="cat">Project</div></div>
+      <div class="skill-row"><div class="idx">06</div><div class="name">drupal-module</div><div class="desc">Scaffold a custom module with full structure</div><div class="cat">Code</div></div>
+      <div class="skill-row"><div class="idx">07</div><div class="name">drupal-install</div><div class="desc">Install a contrib module from drupal.org</div><div class="cat">Code</div></div>
+      <div class="skill-row"><div class="idx">08</div><div class="name">drupal-analyze</div><div class="desc">Run PHPStan and PHPCS against custom code</div><div class="cat">Quality</div></div>
+      <div class="skill-row"><div class="idx">09</div><div class="name">drupal-fix</div><div class="desc">Auto-fix coding-standard violations with PHPCBF</div><div class="cat">Quality</div></div>
+      <div class="skill-row"><div class="idx">10</div><div class="name">drupal-db-export</div><div class="desc">Export the database to a SQL dump</div><div class="cat">Database</div></div>
+      <div class="skill-row"><div class="idx">11</div><div class="name">drupal-db-import</div><div class="desc">Import a SQL dump into the active DB</div><div class="cat">Database</div></div>
+      <div class="skill-row"><div class="idx">12</div><div class="name">drupal-db-query</div><div class="desc">Execute an ad-hoc SQL query</div><div class="cat">Database</div></div>
+      <div class="skill-row"><div class="idx">13</div><div class="name">drupal-logs</div><div class="desc">Read watchdog logs with severity filters</div><div class="cat">Diagnostics</div></div>
+      <div class="skill-row"><div class="idx">14</div><div class="name">drupal-debug</div><div class="desc">Diagnose errors and propose a fix path</div><div class="cat">Diagnostics</div></div>
+      <div class="skill-row"><div class="idx">15</div><div class="name">drupal-perf</div><div class="desc">Profile performance and surface hotspots</div><div class="cat">Diagnostics</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Dev Panel ─── -->
+<section class="section" id="devpanel">
+  <div class="sec-head">
+    <span class="sec-tag">04 · Dev Panel</span>
+    <div>
+      <h2 class="sec-title">Click instead of typing.</h2>
+      <p class="sec-sub">A panel of one-click shortcuts beside the chat — for the things you do twenty times a day.</p>
+    </div>
+  </div>
+
+  <div class="panel-grid">
+    <div class="panel-copy">
+      <h3 class="display">The agent's keyboard, shrunk to four groups.</h3>
+      <p>Buttons map 1-to-1 to skills. Click <b>Cache Rebuild</b> and the agent runs <span class="mono" style="color:var(--blue-soft)">drush cr</span> — same result as asking in chat, two clicks faster.</p>
+      <ul class="panel-features">
+        <li>Buttons are defined in a single JSON file — add, rename, regroup at will.</li>
+        <li>Every action goes through the agent, so you still get an explanation and a log.</li>
+        <li>The active stack's status is visible at a glance — green when nginx, PHP-FPM and DB are up.</li>
+      </ul>
+    </div>
+
+    <div class="panel-mock">
+      <div class="panel-mock-header">
+        <h4>Drupal Dev Panel</h4>
+        <span>● stack up</span>
+      </div>
+      <div class="panel-mock-body">
+        <div class="panel-group">
+          <div class="panel-group-label">Stack</div>
+          <div class="panel-btns">
+            <button class="pbtn run"><span class="dotc"></span>Start</button>
+            <button class="pbtn stop"><span class="dotc"></span>Stop</button>
+            <button class="pbtn"><span class="dotc"></span>Restart</button>
+            <button class="pbtn"><span class="dotc"></span>Status</button>
+          </div>
+        </div>
+        <div class="panel-group">
+          <div class="panel-group-label">Project</div>
+          <div class="panel-btns">
+            <button class="pbtn"><span class="dotc"></span>Init</button>
+            <button class="pbtn"><span class="dotc"></span>Cache rebuild</button>
+            <button class="pbtn"><span class="dotc"></span>Status</button>
+          </div>
+        </div>
+        <div class="panel-group">
+          <div class="panel-group-label">Code</div>
+          <div class="panel-btns">
+            <button class="pbtn"><span class="dotc"></span>New module</button>
+            <button class="pbtn"><span class="dotc"></span>Analyze</button>
+            <button class="pbtn"><span class="dotc"></span>Fix</button>
+            <button class="pbtn"><span class="dotc"></span>Install module</button>
+          </div>
+        </div>
+        <div class="panel-group">
+          <div class="panel-group-label">Database</div>
+          <div class="panel-btns">
+            <button class="pbtn db"><span class="dotc"></span>Export</button>
+            <button class="pbtn db"><span class="dotc"></span>Import</button>
+            <button class="pbtn db"><span class="dotc"></span>Query</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Architecture ─── -->
+<section class="arch-wrap" id="architecture">
+  <div class="section">
+    <div class="sec-head">
+      <span class="sec-tag">05 · Architecture</span>
+      <div>
+        <h2 class="sec-title">One container, four moving parts.</h2>
+        <p class="sec-sub">DrupalClaw runs in a single container that orchestrates everything else through the Docker socket.</p>
+      </div>
+    </div>
+
+    <div class="arch-diagram">
+      <div class="arch-node">
+        <div class="arch-idx">NODE / 01</div>
+        <h4>DrupalClaw</h4>
+        <p>The AI agent and Dev Panel. PHP 8.3, Composer, Drush, full Drupal toolchain.</p>
+        <div class="arch-tags"><span class="arch-tag">agent</span><span class="arch-tag">UI</span></div>
+        <span class="arrow">→</span>
+      </div>
+      <div class="arch-node">
+        <div class="arch-idx">NODE / 02</div>
+        <h4>Docker Socket</h4>
+        <p>Sibling containers managed from inside. No nested Docker, no surprises.</p>
+        <div class="arch-tags"><span class="arch-tag">orchestration</span></div>
+        <span class="arrow">→</span>
+      </div>
+      <div class="arch-node">
+        <div class="arch-idx">NODE / 03</div>
+        <h4>Web Stack</h4>
+        <p>nginx + PHP-FPM, volume-mounted code, production-like behavior in dev.</p>
+        <div class="arch-tags"><span class="arch-tag">nginx</span><span class="arch-tag">php-fpm</span></div>
+        <span class="arrow">→</span>
+      </div>
+      <div class="arch-node">
+        <div class="arch-idx">NODE / 04</div>
+        <h4>Database</h4>
+        <p>MariaDB or PostgreSQL as a sibling, or SQLite if you want zero-deps.</p>
+        <div class="arch-tags"><span class="arch-tag">mariadb</span><span class="arch-tag">postgres</span><span class="arch-tag">sqlite</span></div>
+      </div>
+    </div>
+
+    <p class="arch-footnote">Based on <a href="https://github.com/rcarmo/piclaw" target="_blank" rel="noopener">PiClaw</a> — a self-hosted AI workspace by <a href="https://github.com/rcarmo" target="_blank" rel="noopener">@rcarmo</a>.</p>
+  </div>
+</section>
+
+<!-- ─── Quick Start ─── -->
+<section class="section" id="quickstart">
+  <div class="sec-head">
+    <span class="sec-tag">06 · Quick start</span>
+    <div>
+      <h2 class="sec-title">Up and running in three steps.</h2>
+      <p class="sec-sub">Compose-up, open the browser, talk to the agent. The whole bring-up is under two minutes on a warm cache.</p>
+    </div>
+  </div>
+
+  <div class="qs-grid">
+    <div class="qs-card">
+      <div class="qs-head">
+        <span class="qs-step"><b>STEP 01</b> · Clone &amp; start</span>
+        <button class="copy" onclick="navigator.clipboard.writeText('git clone https://github.com/PauloCarv/drupalclaw.git\ncd drupalclaw\ndocker compose up -d')">Copy</button>
+      </div>
+      <div class="qs-body">
+<span class="c"># clone the repo</span><br />
+git clone <span class="k">https://github.com/PauloCarv/drupalclaw.git</span><br />
+<span class="v">cd</span> drupalclaw<br /><br />
+<span class="c"># start drupalclaw + db</span><br />
+docker compose <span class="v">up</span> -d
+      </div>
+    </div>
+
+    <div class="qs-card">
+      <div class="qs-head">
+        <span class="qs-step"><b>STEP 02</b> · Open the workspace</span>
+      </div>
+      <div class="qs-body">
+<span class="c"># browse to the agent UI</span><br />
+<a href="http://localhost:8083" target="_blank" rel="noopener">http://localhost:8083</a><br /><br />
+<span class="c"># click "Init" in the Dev Panel to scaffold a Drupal project</span><br />
+<span class="c"># click "Start" to launch nginx + php-fpm + db</span><br />
+<span class="c"># talk to the agent</span>
+      </div>
+    </div>
+
+    <div class="qs-card span2">
+      <div class="qs-head">
+        <span class="qs-step"><b>ALT</b> · Standalone, no external db</span>
+        <button class="copy" onclick="navigator.clipboard.writeText('docker run -d --name drupalclaw -p 8083:8080 -v $(pwd)/workspace:/workspace ghcr.io/paulocarv/drupalclaw:latest')">Copy</button>
+      </div>
+      <div class="qs-body">
+<span class="c"># single-container mode with SQLite</span><br />
+docker run -d --name drupalclaw \<br />
+&nbsp;&nbsp;-p <span class="v">8083:8080</span> \<br />
+&nbsp;&nbsp;-v <span class="k">"$(pwd)/workspace:/workspace"</span> \<br />
+&nbsp;&nbsp;<span class="k">ghcr.io/paulocarv/drupalclaw:latest</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Final CTA ─── -->
+<section class="cta-final">
+  <div class="cta-inner">
+    <img src="assets/icon-t.png" alt="DrupalClaw" />
+    <h2 class="display">Claw into Drupal,<br />in one <em>docker compose</em>.</h2>
+    <p>Self-hosted. Agent-first. Open source. Built for the Drupal community.</p>
     <div class="cta-row">
-      <a href="https://github.com/PauloCarv/drupalclaw" class="btn-primary" target="_blank">
-        <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      <a href="https://github.com/PauloCarv/drupalclaw" class="btn btn-primary" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
         View on GitHub
       </a>
-      <a href="#quickstart" class="btn-secondary">Quick Start</a>
+      <a href="https://github.com/rcarmo/piclaw" class="btn btn-ghost" target="_blank" rel="noopener">PiClaw (upstream)</a>
     </div>
   </div>
 </section>
 
-<!-- What is it -->
-<section class="what-is" id="about">
-  <div class="container">
-    <div class="what-grid">
-      <div class="what-text">
-        <h2>What is <em>DrupalClaw</em>?</h2>
-        <p>DrupalClaw is a self-hosted, agent-first workspace built on <a href="https://github.com/rcarmo/piclaw" style="color:var(--teal)">PiClaw</a>. It packages an AI coding agent with a complete Drupal development stack into a single Docker container.</p>
-        <p>Talk to the agent in natural language. It creates projects, manages Docker stacks, runs Drush, scaffolds modules, analyzes code, fixes errors, imports databases &mdash; all through a unified chat interface with a visual Dev Panel.</p>
-        <div class="what-badges">
-          <span class="badge">PHP 8.3</span>
-          <span class="badge">Composer 2</span>
-          <span class="badge">Drush</span>
-          <span class="badge">Docker-in-Docker</span>
-          <span class="badge">MariaDB</span>
-          <span class="badge">nginx + PHP-FPM</span>
-          <span class="badge">PHPStan</span>
-          <span class="badge">PHPCS/PHPCBF</span>
-          <span class="badge">SQLite</span>
-        </div>
-      </div>
-      <div class="screenshot-wrap">
-        <div class="screenshot-bar">
-          <span class="screenshot-dot r"></span>
-          <span class="screenshot-dot y"></span>
-          <span class="screenshot-dot g"></span>
-        </div>
-        <div class="screenshot-body">
-          <span class="prompt">Paulo:</span> <span class="output">create a new drupal project and start the stack</span><br><br>
-          <span class="prompt">DrupalClaw:</span> <span class="cmd">Running drupal-init...</span><br>
-          <span class="output">$ composer create-project drupal/recommended-project drupal</span><br>
-          <span class="highlight">&#10003; Project created in /workspace/drupal</span><br><br>
-          <span class="cmd">Running drupal-serve...</span><br>
-          <span class="output">$ docker compose up -d (nginx + php-fpm + mariadb)</span><br>
-          <span class="highlight">&#10003; Stack running on http://localhost:8080</span><br><br>
-          <span class="prompt">Paulo:</span> <span class="output">install admin_toolbar and rebuild cache</span><br>
-          <span class="cmd">$ composer require drupal/admin_toolbar</span><br>
-          <span class="cmd">$ drush en admin_toolbar -y && drush cr</span><br>
-          <span class="highlight">&#10003; admin_toolbar enabled, cache cleared</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Features -->
-<section class="features" id="features">
-  <div class="container">
-    <h2 class="section-title">Built for Drupal Developers</h2>
-    <p class="section-subtitle">Everything you need in a single container</p>
-    <div class="feat-grid">
-      <div class="feat-card">
-        <div class="feat-icon">&#129302;</div>
-        <h3>Agent-First Workflow</h3>
-        <p>Chat with an AI agent that understands Drupal. Create projects, debug errors, manage modules, run Drush &mdash; all in natural language.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">&#128736;</div>
-        <h3>Visual Dev Panel</h3>
-        <p>One-click buttons for common tasks: start stack, cache rebuild, analyze code, export database. Fully customizable via JSON config.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">&#128051;</div>
-        <h3>Docker Stack Management</h3>
-        <p>Production-like environment with nginx + PHP-FPM + MariaDB/PostgreSQL/SQLite. Managed through sibling containers via Docker socket.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">&#128268;</div>
-        <h3>14 Built-in Skills</h3>
-        <p>Pre-configured commands for the entire Drupal lifecycle: init, serve, modules, analysis, fixes, database, logs, debugging, performance.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">&#128270;</div>
-        <h3>Code Quality Tools</h3>
-        <p>PHPStan and PHPCS/PHPCBF integrated via skills. Analyze custom code for errors, then auto-fix coding standard violations.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">&#128218;</div>
-        <h3>Self-Hosted & Open Source</h3>
-        <p>Runs on your machine or server. Your code stays local. Based on PiClaw &mdash; fully open source and extensible.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Skills -->
-<section class="skills-section" id="skills">
-  <div class="container">
-    <h2 class="section-title">14 Drupal Skills</h2>
-    <p class="section-subtitle">Pre-configured commands the agent executes on demand</p>
-    <div class="skills-grid">
-      <div class="skill-item">
-        <div class="skill-icon">&#128640;</div>
-        <div><div class="skill-name">drupal-init</div><div class="skill-desc">Create project via Composer</div></div>
-      </div>
-      <div class="skill-item">
-        <div class="skill-icon">&#9654;&#65039;</div>
-        <div><div class="skill-name">drupal-serve</div><div class="skill-desc">Start Docker stack</div></div>
-      </div>
-      <div class="skill-item">
-        <div class="skill-icon">&#128295;</div>
-        <div><div class="skill-name">drupal-stack</div><div class="skill-desc">Start/stop/restart containers</div></div>
-      </div>
-      <div class="skill-item">
-        <div class="skill-icon">&#128260;</div>
-        <div><div class="skill-name">drupal-cr</div><div class="skill-desc">Cache rebuild (drush cr)</div></div>
-      </div>
-      <div class="skill-item">
-        <div class="skill-icon">&#128203;</div>
-        <div><div class="skill-name">drupal-status</div><div class="skill-desc">Project &amp; module status</div></div>
-      </div>
-      <div class="skill-item">
-        <div class="skill-icon">&#128230;</div>
-        <div><div class="skill-name">drupal-module</div><div class="skill-desc">Scaffold custom module</div></div>
-      </div>
-      <div class="skill-item">
-        <div class="skill-icon">&#128270;</div>
-        <div><div class="skill-name">drupal-analyze</div><div class="skill-desc">PHPStan + PHPCS analysis</div></div>
-      </div>
-      <div class="skill-item">
-        <div class="skill-icon">&#128295;</div>
-        <div><div class="skill-name">drupal-fix</div><div class="skill-desc">Auto-fix code standards</div></div>
-      </div>
-      <div class="skill-item">
-        <div class="skill-icon">&#129513;</div>
-        <div><div class="skill-name">drupal-install</div><div class="skill-desc">Install contrib module</div></div>
-      </div>
-      <div class="skill-item">
-        <div class="skill-icon">&#128190;</div>
-        <div><div class="skill-name">drupal-db-export</div><div class="skill-desc">Export database to SQL</div></div>
-      </div>
-      <div class="skill-item">
-        <div class="skill-icon">&#128229;</div>
-        <div><div class="skill-name">drupal-db-import</div><div class="skill-desc">Import SQL dump</div></div>
-      </div>
-      <div class="skill-item">
-        <div class="skill-icon">&#128269;</div>
-        <div><div class="skill-name">drupal-db-query</div><div class="skill-desc">Execute SQL query</div></div>
-      </div>
-      <div class="skill-item">
-        <div class="skill-icon">&#128220;</div>
-        <div><div class="skill-name">drupal-logs</div><div class="skill-desc">Watchdog log viewer</div></div>
-      </div>
-      <div class="skill-item">
-        <div class="skill-icon">&#128027;</div>
-        <div><div class="skill-name">drupal-debug</div><div class="skill-desc">Error diagnosis</div></div>
-      </div>
-      <div class="skill-item">
-        <div class="skill-icon">&#9889;</div>
-        <div><div class="skill-name">drupal-perf</div><div class="skill-desc">Performance analysis</div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Dev Panel -->
-<section class="devpanel" id="devpanel">
-  <div class="container">
-    <h2 class="section-title">Dev Panel</h2>
-    <p class="section-subtitle">Visual shortcuts &mdash; click to execute, fully customizable</p>
-    <div class="panel-mockup">
-      <div class="panel-header">
-        <h3>Drupal Dev Panel</h3>
-        <p>Click to execute commands</p>
-      </div>
-      <div class="panel-group">
-        <div class="panel-group-label">Stack</div>
-        <div class="panel-btns">
-          <button class="panel-btn">&#128640; Start Stack</button>
-          <button class="panel-btn">&#9632; Stop</button>
-          <button class="panel-btn">&#128260; Restart</button>
-          <button class="panel-btn">&#128202; Status</button>
-        </div>
-      </div>
-      <div class="panel-group">
-        <div class="panel-group-label">Project</div>
-        <div class="panel-btns">
-          <button class="panel-btn">&#128640; Init</button>
-          <button class="panel-btn">&#128260; Cache Rebuild</button>
-          <button class="panel-btn">&#128203; Status</button>
-        </div>
-      </div>
-      <div class="panel-group">
-        <div class="panel-group-label">Code</div>
-        <div class="panel-btns">
-          <button class="panel-btn">&#128230; New Module</button>
-          <button class="panel-btn">&#128270; Analyze</button>
-          <button class="panel-btn">&#128295; Fix</button>
-          <button class="panel-btn">&#129513; Install Module</button>
-        </div>
-      </div>
-      <div class="panel-group" style="border-bottom: none;">
-        <div class="panel-group-label">Database</div>
-        <div class="panel-btns">
-          <button class="panel-btn">&#128190; DB Export</button>
-          <button class="panel-btn">&#128229; DB Import</button>
-          <button class="panel-btn">&#128269; DB Query</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Architecture -->
-<section class="arch" id="architecture">
-  <div class="container">
-    <h2 class="section-title">Architecture</h2>
-    <p class="section-subtitle">One container orchestrates everything</p>
-    <div class="arch-diagram">
-      <div class="arch-box">
-        <div class="arch-icon">&#129302;</div>
-        <h4>DrupalClaw</h4>
-        <p>AI Agent + Dev Panel<br>PHP 8.3 + Composer + Drush</p>
-      </div>
-      <div class="arch-arrow">&#8594;</div>
-      <div class="arch-box">
-        <div class="arch-icon">&#128051;</div>
-        <h4>Docker Socket</h4>
-        <p>Sibling containers<br>managed from inside</p>
-      </div>
-      <div class="arch-arrow">&#8594;</div>
-      <div class="arch-box">
-        <div class="arch-icon">&#127760;</div>
-        <h4>nginx + PHP-FPM</h4>
-        <p>Production-like stack<br>Volume-mounted code</p>
-      </div>
-      <div class="arch-arrow">&#8594;</div>
-      <div class="arch-box">
-        <div class="arch-icon">&#128451;</div>
-        <h4>Database</h4>
-        <p>MariaDB / PostgreSQL<br>or SQLite</p>
-      </div>
-    </div>
-    <p style="text-align:center; color:var(--light-text); font-size:0.9rem;">Based on <a href="https://github.com/rcarmo/piclaw" style="color:var(--teal)">PiClaw</a> &mdash; a self-hosted AI workspace by <a href="https://github.com/rcarmo" style="color:var(--teal)">@rcarmo</a></p>
-  </div>
-</section>
-
-<!-- Quick Start -->
-<section class="quickstart" id="quickstart">
-  <div class="container">
-    <h2 class="section-title">Quick Start</h2>
-    <p class="section-subtitle">Up and running in 3 commands</p>
-
-    <div class="code-block">
-      <div class="code-header">
-        <span>Terminal</span>
-        <button class="copy-btn" onclick="navigator.clipboard.writeText('git clone https://github.com/PauloCarv/drupalclaw.git\ncd drupalclaw\ndocker compose up -d')">Copy</button>
-      </div>
-      <div class="code-body">
-        <span class="comment"># Clone the repository</span><br>
-        git clone https://github.com/PauloCarv/drupalclaw.git<br><br>
-        <span class="comment"># Enter the directory</span><br>
-        cd drupalclaw<br><br>
-        <span class="comment"># Start DrupalClaw + MariaDB</span><br>
-        docker compose up -d
-      </div>
-    </div>
-
-    <div class="code-block">
-      <div class="code-header">
-        <span>Access</span>
-      </div>
-      <div class="code-body">
-        <span class="comment"># Open your browser</span><br>
-        <span style="color:var(--teal)">http://localhost:8083</span><br><br>
-        <span class="comment"># Click "Init" in the Dev Panel to create a Drupal project</span><br>
-        <span class="comment"># Click "Start Stack" to launch nginx + PHP-FPM + MariaDB</span><br>
-        <span class="comment"># Start talking to the agent!</span>
-      </div>
-    </div>
-
-    <div class="code-block">
-      <div class="code-header">
-        <span>Standalone (without external DB)</span>
-        <button class="copy-btn" onclick="navigator.clipboard.writeText('docker run -d --name drupalclaw -p 8083:8080 -v $(pwd)/workspace:/workspace ghcr.io/paulocarv/drupalclaw:latest')">Copy</button>
-      </div>
-      <div class="code-body">
-        <span class="comment"># Run standalone with SQLite</span><br>
-        docker run -d --name drupalclaw \<br>
-        &nbsp;&nbsp;-p 8083:8080 \<br>
-        &nbsp;&nbsp;-v "$(pwd)/workspace:/workspace" \<br>
-        &nbsp;&nbsp;ghcr.io/paulocarv/drupalclaw:latest
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA -->
-<section class="cta-section">
-  <h2>Ready to Claw into Drupal?</h2>
-  <p>Open source, self-hosted, agent-first. Start building with AI today.</p>
-  <div class="cta-row" style="justify-content:center;">
-    <a href="https://github.com/PauloCarv/drupalclaw" class="btn-primary" target="_blank">
-      <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-      View on GitHub
-    </a>
-    <a href="https://github.com/rcarmo/piclaw" class="btn-secondary" target="_blank">PiClaw (upstream)</a>
-  </div>
-</section>
-
-<!-- Footer -->
+<!-- ─── Footer ─── -->
 <footer>
-  <p>
-    <strong>DrupalClaw</strong> &mdash; by <a href="https://github.com/PauloCarv">Paulo Carvalho</a>
-    &nbsp;&middot;&nbsp; Based on <a href="https://github.com/rcarmo/piclaw">PiClaw</a> by @rcarmo
-    &nbsp;&middot;&nbsp; Open Source &middot; GPL-2.0
-  </p>
+  <div class="foot-brand">
+    <span class="mark" style="display:inline-grid;place-items:center;width:24px;height:24px;border-radius:6px;overflow:hidden;"><img src="assets/icon-t.png" style="width:100%;height:100%;object-fit:contain" alt="" /></span>
+    Drupal<b>Claw</b>
+  </div>
+  <div class="foot-meta">
+    by <a href="https://github.com/PauloCarv" target="_blank" rel="noopener">@PauloCarv</a>
+    · based on <a href="https://github.com/rcarmo/piclaw" target="_blank" rel="noopener">PiClaw</a>
+    · GPL-2.0
+  </div>
 </footer>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('dc-theme'); } catch (e) {}
+    var initial = saved || 'dark';
+    root.setAttribute('data-theme', initial);
+
+    function apply(theme) {
+      root.setAttribute('data-theme', theme);
+      try { localStorage.setItem('dc-theme', theme); } catch (e) {}
+      document.querySelectorAll('.theme-toggle [data-set-theme]').forEach(function (btn) {
+        btn.classList.toggle('is-active', btn.getAttribute('data-set-theme') === theme);
+        btn.setAttribute('aria-pressed', btn.getAttribute('data-set-theme') === theme ? 'true' : 'false');
+      });
+    }
+
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-set-theme]');
+      if (!btn) return;
+      apply(btn.getAttribute('data-set-theme'));
+    });
+
+    apply(initial);
+  })();
+</script>
 
 </body>
 </html>
