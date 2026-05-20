@@ -748,7 +748,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
       </button>
     </div>
-    <a href="https://github.com/PauloCarv/drupalclaw" class="gh" target="_blank" rel="noopener">
+    <a href="https://github.com/PauloCarv/drupalclaw-project" class="gh" target="_blank" rel="noopener">
       <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
       Star on GitHub
     </a>
@@ -770,7 +770,7 @@
         and it builds.
       </p>
       <div class="cta-row">
-        <a href="https://github.com/PauloCarv/drupalclaw" class="btn btn-primary" target="_blank" rel="noopener">
+        <a href="https://github.com/PauloCarv/drupalclaw-project" class="btn btn-primary" target="_blank" rel="noopener">
           <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
           View source
         </a>
@@ -944,7 +944,7 @@
     </div>
 
     <div class="skills-table">
-      <div class="skill-row"><div class="idx">01</div><div class="name">drupal-init</div><div class="desc">Create a new Drupal project via Composer</div><div class="cat">Project</div></div>
+      <div class="skill-row"><div class="idx">01</div><div class="name">drupal-init</div><div class="desc">Initialize a project — new via Composer or clone from Git, with optional DB/files import</div><div class="cat">Project</div></div>
       <div class="skill-row"><div class="idx">02</div><div class="name">drupal-serve</div><div class="desc">Start the Docker stack (nginx + PHP-FPM + DB)</div><div class="cat">Stack</div></div>
       <div class="skill-row"><div class="idx">03</div><div class="name">drupal-stack</div><div class="desc">Start, stop, or restart sibling containers</div><div class="cat">Stack</div></div>
       <div class="skill-row"><div class="idx">04</div><div class="name">drupal-cr</div><div class="desc">Rebuild Drupal cache (drush cr)</div><div class="cat">Project</div></div>
@@ -1088,13 +1088,14 @@
     <div class="qs-card">
       <div class="qs-head">
         <span class="qs-step"><b>STEP 01</b> · Clone &amp; start</span>
-        <button class="copy" onclick="navigator.clipboard.writeText('git clone https://github.com/PauloCarv/drupalclaw.git\ncd drupalclaw\ndocker compose up -d')">Copy</button>
+        <button class="copy" onclick="navigator.clipboard.writeText('git clone https://github.com/PauloCarv/drupalclaw-project.git\ncd drupalclaw-project/docker\nDOCKER_BUILDKIT=0 docker compose build\ndocker compose up -d')">Copy</button>
       </div>
       <div class="qs-body">
 <span class="c"># clone the repo</span><br />
-git clone <span class="k">https://github.com/PauloCarv/drupalclaw.git</span><br />
-<span class="v">cd</span> drupalclaw<br /><br />
-<span class="c"># start drupalclaw + db</span><br />
+git clone <span class="k">https://github.com/PauloCarv/drupalclaw-project.git</span><br />
+<span class="v">cd</span> drupalclaw-project/docker<br /><br />
+<span class="c"># build and start</span><br />
+<span class="v">DOCKER_BUILDKIT=0</span> docker compose build<br />
 docker compose <span class="v">up</span> -d
       </div>
     </div>
@@ -1105,7 +1106,7 @@ docker compose <span class="v">up</span> -d
       </div>
       <div class="qs-body">
 <span class="c"># browse to the agent UI</span><br />
-<a href="http://localhost:8083" target="_blank" rel="noopener">http://localhost:8083</a><br /><br />
+<a href="http://localhost:8090" target="_blank" rel="noopener">http://localhost:8090</a><br /><br />
 <span class="c"># click "Init" in the Dev Panel to scaffold a Drupal project</span><br />
 <span class="c"># click "Start" to launch nginx + php-fpm + db</span><br />
 <span class="c"># talk to the agent</span>
@@ -1115,14 +1116,14 @@ docker compose <span class="v">up</span> -d
     <div class="qs-card span2">
       <div class="qs-head">
         <span class="qs-step"><b>ALT</b> · Standalone, no external db</span>
-        <button class="copy" onclick="navigator.clipboard.writeText('docker run -d --name drupalclaw -p 8083:8080 -v $(pwd)/workspace:/workspace ghcr.io/paulocarv/drupalclaw:latest')">Copy</button>
+        <button class="copy" onclick="navigator.clipboard.writeText('docker run -d --name drupalclaw -p 8090:8090 -v $(pwd)/workspace:/workspace ghcr.io/paulocarv/drupalclaw-project:latest')">Copy</button>
       </div>
       <div class="qs-body">
 <span class="c"># single-container mode with SQLite</span><br />
 docker run -d --name drupalclaw \<br />
-&nbsp;&nbsp;-p <span class="v">8083:8080</span> \<br />
+&nbsp;&nbsp;-p <span class="v">8090:8090</span> \<br />
 &nbsp;&nbsp;-v <span class="k">"$(pwd)/workspace:/workspace"</span> \<br />
-&nbsp;&nbsp;<span class="k">ghcr.io/paulocarv/drupalclaw:latest</span>
+&nbsp;&nbsp;<span class="k">ghcr.io/paulocarv/drupalclaw-project:latest</span>
       </div>
     </div>
   </div>
@@ -1135,7 +1136,7 @@ docker run -d --name drupalclaw \<br />
     <h2 class="display">Claw into Drupal,<br />in one <em>docker compose</em>.</h2>
     <p>Self-hosted. Agent-first. Open source. Built for the Drupal community.</p>
     <div class="cta-row">
-      <a href="https://github.com/PauloCarv/drupalclaw" class="btn btn-primary" target="_blank" rel="noopener">
+      <a href="https://github.com/PauloCarv/drupalclaw-project" class="btn btn-primary" target="_blank" rel="noopener">
         <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
         View on GitHub
       </a>
