@@ -1230,12 +1230,12 @@ docker compose <span class="v">up</span> -d
     <div class="qs-card span2">
       <div class="qs-head">
         <span class="qs-step"><b>ALT</b> · Standalone, no external db</span>
-        <button class="copy" onclick="navigator.clipboard.writeText('docker run -d --name drupalclaw -p 8090:8090 -v $(pwd)/workspace:/workspace ghcr.io/paulocarv/drupalclaw-project:latest')">Copy</button>
+        <button class="copy" onclick="navigator.clipboard.writeText('docker run -d --name drupalclaw -p 8090:8080 -v $(pwd)/workspace:/workspace ghcr.io/paulocarv/drupalclaw-project:latest')">Copy</button>
       </div>
       <div class="qs-body">
 <span class="c"># single-container mode with SQLite</span><br />
 docker run -d --name drupalclaw \<br />
-&nbsp;&nbsp;-p <span class="v">8090:8090</span> \<br />
+&nbsp;&nbsp;-p <span class="v">8090:8080</span> \<br />
 &nbsp;&nbsp;-v <span class="k">"$(pwd)/workspace:/workspace"</span> \<br />
 &nbsp;&nbsp;<span class="k">ghcr.io/paulocarv/drupalclaw-project:latest</span>
       </div>
