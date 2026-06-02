@@ -1203,14 +1203,13 @@
     <div class="qs-card">
       <div class="qs-head">
         <span class="qs-step"><b>STEP 01</b> · Clone &amp; start</span>
-        <button class="copy" onclick="navigator.clipboard.writeText('git clone https://github.com/PauloCarv/drupalclaw-project.git\ncd drupalclaw-project/docker\nDOCKER_BUILDKIT=0 docker compose build\ndocker compose up -d')">Copy</button>
+        <button class="copy" onclick="navigator.clipboard.writeText('git clone https://github.com/PauloCarv/drupalclaw-project.git\ncd drupalclaw-project/docker\ndocker compose up -d')">Copy</button>
       </div>
       <div class="qs-body">
 <span class="c"># clone the repo</span><br />
 git clone <span class="k">https://github.com/PauloCarv/drupalclaw-project.git</span><br />
 <span class="v">cd</span> drupalclaw-project/docker<br /><br />
-<span class="c"># build and start</span><br />
-<span class="v">DOCKER_BUILDKIT=0</span> docker compose build<br />
+<span class="c"># pull pre-built image and start — no build step needed</span><br />
 docker compose <span class="v">up</span> -d
       </div>
     </div>
