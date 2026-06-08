@@ -1240,6 +1240,20 @@ docker run -d --name drupalclaw \<br />
 &nbsp;&nbsp;<span class="k">ghcr.io/paulocarv/drupalclaw-project:latest</span>
       </div>
     </div>
+
+    <div class="qs-card span2">
+      <div class="qs-head">
+        <span class="qs-step"><b>UPDATING</b> · Zero data loss</span>
+        <button class="copy" onclick="navigator.clipboard.writeText('docker compose pull\ndocker compose up -d')">Copy</button>
+      </div>
+      <div class="qs-body">
+<span class="c"># your Drupal project, chat history and credentials live in Docker volumes — safe</span><br />
+docker compose <span class="v">pull</span><br />
+docker compose <span class="v">up</span> -d<br /><br />
+<span class="c"># the app shows the installed version and notifies when a new release is available</span><br />
+<span class="c"># pin to a specific version: image: ghcr.io/paulocarv/drupalclaw-project:1.0.0</span>
+      </div>
+    </div>
   </div>
 </section>
 
