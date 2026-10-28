@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DrupalClaw — An agent-first workspace for Drupal</title>
-  <meta name="description" content="DrupalClaw is an agent-first Drupal workspace. AI-powered development with 17 built-in skills, Flows automation, executable Plans, Dev Panel, Docker stack, and full PHP tooling — all in one container." />
+  <meta name="description" content="DrupalClaw is an agent-first Drupal workspace. AI-powered development with 21 built-in skills, Flows automation, executable Plans, Dev Panel, Docker stack, and full PHP tooling — all in one container." />
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
@@ -925,14 +925,14 @@
 <section class="hero">
   <div class="hero-inner">
     <div class="hero-copy">
-      <span class="eyebrow"><span class="pulse"></span>v0.1 · open source · GPL-2.0</span>
+      <span class="eyebrow"><span class="pulse"></span>v1.4.3 · open source · MIT</span>
       <h1 class="display">
         An <span class="underline">agent-first</span><br />
         workspace for <span class="ink-blue">Drupal</span>.
       </h1>
       <p class="lede">
         DrupalClaw is your Drupal coworker: an <b>AI coding agent</b>, a Docker-managed PHP stack,
-        and 15 Drupal-specific skills, packaged into a single self-hosted container. Talk to it,
+        and 21 Drupal-specific skills, packaged into a single self-hosted container. Talk to it,
         and it builds.
       </p>
       <div class="cta-row">
@@ -946,7 +946,7 @@
         </a>
       </div>
       <div class="hero-meta">
-        <span><b>17</b> built-in skills</span>
+        <span><b>21</b> built-in skills</span>
         <span><b>1</b> container</span>
         <span><b>0</b> config to start</span>
       </div>
@@ -1074,8 +1074,8 @@
       <div class="feat-icon">
         <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="4" cy="6" r="1.4" fill="currentColor" stroke="none"/><circle cx="4" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="4" cy="18" r="1.4" fill="currentColor" stroke="none"/></svg>
       </div>
-      <h3>17 built-in skills</h3>
-      <p>Init, serve, modules, analysis, fixes, database I/O, logs, debugging, performance, automated plans — the full Drupal day.</p>
+      <h3>21 built-in skills</h3>
+      <p>Init, serve, modules, themes, contrib prep, analysis, fixes, database I/O, logs, debugging, performance, automated plans — the full Drupal day.</p>
     </div>
 
     <div class="feat">
@@ -1093,7 +1093,7 @@
         <svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M4 6l8 7 8-7"/><path d="M8 18v3M16 18v3"/></svg>
       </div>
       <h3>Self-hosted, open source</h3>
-      <p>Your code, your machine, your control. GPL-2.0, built on PiClaw, extensible top to bottom.</p>
+      <p>Your code, your machine, your control. MIT, built on PiClaw, extensible top to bottom.</p>
     </div>
   </div>
 </section>
@@ -1160,7 +1160,7 @@
     <div class="sec-head">
       <span class="sec-tag">04 · Skills</span>
       <div>
-        <h2 class="sec-title">17 commands the agent already knows.</h2>
+        <h2 class="sec-title">21 commands the agent already knows.</h2>
         <p class="sec-sub">Each skill is a focused, pre-configured command the agent invokes on your behalf — no glue code required.</p>
       </div>
     </div>
@@ -1183,6 +1183,10 @@
       <div class="skill-row"><div class="idx">15</div><div class="name">drupal-perf</div><div class="desc">Profile performance and surface hotspots</div><div class="cat">Diagnostics</div></div>
       <div class="skill-row"><div class="idx">16</div><div class="name">drupal-plan-run</div><div class="desc">Execute a Plan step by step, ticking checkboxes and logging each result</div><div class="cat">Plans</div></div>
       <div class="skill-row"><div class="idx">17</div><div class="name">drupal-plan-validate</div><div class="desc">Run the Verification checks of a Plan and update its final status</div><div class="cat">Plans</div></div>
+      <div class="skill-row"><div class="idx">18</div><div class="name">drupal-theme</div><div class="desc">Create a theme: Starterkit, sub-theme or minimal, with regions, styling and components</div><div class="cat">Code</div></div>
+      <div class="skill-row"><div class="idx">19</div><div class="name">drupal-contrib</div><div class="desc">Audit a module or theme and prepare it for drupal.org, then guide the release</div><div class="cat">Code</div></div>
+      <div class="skill-row"><div class="idx">20</div><div class="name">drupal-index</div><div class="desc">Index the codebase with GitNexus so the agent can query code relationships</div><div class="cat">Quality</div></div>
+      <div class="skill-row"><div class="idx">21</div><div class="name">drupal-marketplace</div><div class="desc">Install skills and MCP servers from a catalog URL</div><div class="cat">Extending</div></div>
     </div>
     <p style="margin-top:1.5rem; font-size:0.9rem; color:var(--muted);">
       Each skill has a dedicated documentation page with usage, parameters, and examples. →
@@ -1465,7 +1469,7 @@ docker compose <span class="v">up</span> -d<br /><br />
     by Paulo Maia Carvalho · <a href="https://github.com/PauloCarv" target="_blank" rel="noopener">@PauloCarv</a>
     · <a href="https://blog.drupalclaw.dev" target="_blank" rel="noopener">Blog</a>
     · based on <a href="https://github.com/rcarmo/piclaw" target="_blank" rel="noopener">PiClaw</a>
-    · GPL-2.0
+    · MIT
   </div>
 </footer>
 
